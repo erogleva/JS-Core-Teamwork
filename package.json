@@ -1,0 +1,19 @@
+{
+  "name": "team",
+  "version": "1.0.0",
+  "description": "Final team work",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erogleva/JS-Core-Teamwork.git"
+  },
+  "homepage": "https://github.com/erogleva/JS-Core-Teamwork#readme",
+  "dependencies": {
+    "handlebars": "^4.0.10",
+    "jquery": "3.2.1",
+    "sammy": "0.7.6"
+  }
+}
