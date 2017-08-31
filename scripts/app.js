@@ -18,6 +18,8 @@ $(() => {
         this.get('#/home', displayHome);
         this.get('index.html', displayHome);
         function displayHome(ctx) {
+           isLogin(ctx);
+
             ctx.loadPartials({
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
@@ -109,6 +111,11 @@ $(() => {
         });
 
 
+        function isLogin(ctx) {
+            if (sessionStorage.getItem('username') !== null) {
+               ctx.user =sessionStorage.getItem('username');
+            }
+        }
     });
 
     app.run();
