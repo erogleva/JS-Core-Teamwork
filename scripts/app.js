@@ -96,7 +96,18 @@ $(() => {
                 regForm.find("input[name*='username']").val('');
                 regForm.find("input[name*='passwd']").val('');
             }
-        })
+        });
+
+
+        //Logout
+        this.get('#/logout', function (ctx) {
+            auth.logout().then(function () {
+                sessionStorage.clear();
+                auth.showInfo('Logout successful.');
+                displayHome(ctx);
+            }).catch(auth.handleError);
+        });
+
 
     });
 
