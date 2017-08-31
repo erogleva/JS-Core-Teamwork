@@ -19,7 +19,6 @@ $(() => {
         this.get('index.html', displayHome);
         function displayHome(ctx) {
            isLogin(ctx);
-
             ctx.loadPartials({
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
@@ -29,6 +28,7 @@ $(() => {
                 this.partial('./temp/homePage/home.hbs');
             })
         }
+
         //Login Page
         this.get('#/login', function (ctx) {
             ctx.loadPartials({
@@ -99,7 +99,6 @@ $(() => {
                 regForm.find("input[name*='passwd']").val('');
             }
         });
-
 
         //Logout
         this.get('#/logout', function (ctx) {
