@@ -10,6 +10,7 @@ let auth = (() => {
         sessionStorage.setItem('userStatus', userStatus);
     }
 
+
     // user/login
     function login(username, password) {
         let userData = {
