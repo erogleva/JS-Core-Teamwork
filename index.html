@@ -3,91 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Personal Ads for Cars and Parts</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/notifications.css">
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script src="node_modules/handlebars/dist/handlebars.min.js"></script>
     <script src="node_modules/sammy/lib/min/sammy-0.7.6.min.js"></script>
     <script src="node_modules/sammy/lib/plugins/sammy.handlebars.js"></script>
-    <script src="scripts/app.js"></script>
     <script src="scripts/models/requester.js"></script>
     <script src="scripts/models/auth.js"></script>
-
-    <link rel="stylesheet" href="styles/style.css">
+    <script src="scripts/models/notifications.js"></script>
+    <script src="scripts/app.js"></script>
 </head>
 <body>
-
-<section class="notifications">
-    <div id="loadingBox" class="loadingBox">Loading ...</div>
-    <div id="infoBox" class="infoBox">Info</div>
-    <div id="errorBox" class="errorBox">Error</div>
-</section>
-
-<!-- Added to temp/common/header.hbs -->
-<!--<header>-->
-    <!--&lt;!&ndash; Logo &ndash;&gt;-->
-    <!--<img src="" alt="">-->
-
-    <!--&lt;!&ndash; Navigation &ndash;&gt;-->
-    <!--<a href="#" id="linkHome" class="menu-item" >Home</a>-->
-    <!--<a href="#" id="linkLogin" class="menu-item">Login</a>-->
-    <!--<a href="#" id="linkRegister" class="menu-item">Register</a>-->
-    <!--<a href="#" id="linkListAds" class="menu-item">Categories</a>-->
-    <!--<a href="#" id="linkContactUs" class="menu-item">Contact Us</a>-->
-    <!--<a href="#" id="linkCreateAd" class="menu-item">Create New Advertisement</a>-->
-    <!--<a href="#" id="linkLogout" class="menu-item">Logout</a>-->
-    <!--<span id="loggedInUser" class="menu-item"></span>-->
-<!--</header>-->
-
-<main id="main">
-
-
-    <!-- Added to .temp/homePage/ -->
-    <!--<section id="viewHome" class="viewHome">-->
-        <!--<form id="formSearchForAds" class="form">-->
-            <!--<div><input type="text" name="adSearch" placeholder="Search for your ad here" required /></div>-->
-            <!--<div><input type="date" name="date" placeholder="Enter date" required /></div>-->
-            <!--<div><input type="text" name="location" placeholder="Enter location" required /></div>-->
-            <!--<div><input type="range" name="price" required /></div>-->
-            <!--<div><input type="button" id="buttonSearchForAds" value="Search" /></div>-->
-        <!--</form>-->
-
-        <!--<article class="adPreview">-->
-            <!--<img src="" alt="" class="adPreviewImage">-->
-            <!--<h5>An example for an ad</h5>-->
-            <!--<p>This is my first ad. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>-->
-        <!--</article>-->
-    <!--</section>-->
-
-<!--add to registrationPage-->
-    <!--<section id="viewRegister" class="viewRegister">-->
-        <!--<h1 class="titleForm">Please register here</h1>-->
-        <!--<form id="formRegister" class="form">-->
-            <!--<div>Username:</div>-->
-            <!--<div><input type="text" name="username" required /></div>-->
-            <!--<div>Password:</div>-->
-            <!--<div><input type="password" name="passwd" required /></div>-->
-            <!--<div><input type="button" id="buttonRegisterUser" value="Register" /></div>-->
-        <!--</form>-->
-    <!--</section>-->
-
-
-    <!-- Added to .temp/loginPage/ -->
-    <!--<section id="viewLogin" class="viewLogin">-->
-        <!--<h1 class="titleForm">Please login</h1>-->
-        <!--<form id="formLogin" class="form">-->
-            <!--<div>Username:</div>-->
-            <!--<div><input type="text" name="username" required /></div>-->
-            <!--<div>Password:</div>-->
-            <!--<div><input type="password" name="passwd" required /></div>-->
-            <!--<div><input type="button" id="buttonLoginUser" value="Login" /></div>-->
-        <!--</form>-->
-    <!--</section>-->
-</main>
-
-
-<!-- Added to .temp/common/footer.hbs!-->
-
-<!-- <footer>Personal Ads for Cars and Parts</footer> !-->
-
-
+<div id="wrapper">
+    <div class="container-fluid" style="padding: 0px">
+        <div id="main">
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,7 +1,61 @@
-<form id="formRegister" class="form" method="post" action="#/registration">
-    <div>Username:</div>
-    <div><input type="text" name="username" required /></div>
-    <div>Password:</div>
-    <div><input type="password" name="passwd" required /></div>
-    <div><input type="submit" id="buttonRegisterUser" value="Register" /></div>
+<form class="form-horizontal" method="post" action="#/registration">
+    <fieldset>
+        <legend>Register</legend>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="inputUsername">Username</label>
+            <div class="col-sm-4 ">
+                <input type="text" class="form-control" id="inputUsername" placeholder="Username" name="username"
+                       required>
+            </div>
+        </div>
+        <!--<div class="form-group">-->
+        <!--<label class="col-sm-4 control-label" for="inputEmail">Email</label>-->
+        <!--<div class="col-sm-4 ">-->
+        <!--<input type="text" class="form-control" id="inputEmail" placeholder="Email" name="email" required-->
+        <!--value={{email}}>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label class="col-sm-4 control-label" for="inputFullName">Full Name</label>-->
+        <!--<div class="col-sm-4 ">-->
+        <!--<input type="text" class="form-control" id="inputFullName" placeholder="Full Name" required-->
+        <!--name="fullName" value={{fullName}}>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label class="col-sm-4 control-label" for="inputLocation">Location</label>-->
+        <!--<div class="col-sm-4 ">-->
+        <!--<input type="text" class="form-control" id="inputLocation" placeholder="Location" name="location"-->
+        <!--value={{location}}>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label class="col-sm-4 control-label" for="inputDate">Birthdate</label>-->
+        <!--<div class="col-sm-4 ">-->
+        <!--<input type="date" class="form-control" id="inputDate" placeholder="Birthdate" name="birthdate" required-->
+        <!--value={{birthdate}}>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<br>-->
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="inputPassword">Password</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" id="inputPassword" placeholder="Password" required
+                       name="passwd">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Confirm Password</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" id="inputPassword" placeholder="Confirm Password" required
+                       name="confirmPasswd">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-4">
+                <a class="btn btn-default" href="#/home">Cancel</a>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+    </fieldset>
 </form>

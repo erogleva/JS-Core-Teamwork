@@ -1,18 +1,102 @@
-<header>
-    <!-- Logo -->
-    <img src="" alt="">
+<!--<header>-->
+<!--&lt;!&ndash; Logo &ndash;&gt;-->
+<!--<img src="" alt="">-->
 
-    <!-- Navigation -->
-    {{#if user}}
-    <a href="#/home" id="linkHome" class="menu-item" >Home</a>
-    <a href="#" id="linkListAds" class="menu-item">Categories</a>
-    <a href="#" id="linkContactUs" class="menu-item">Contact Us</a>
-    <a href="#" id="linkCreateAd" class="menu-item">Create New Advertisement</a>
-    <a href="#/logout" id="linkLogout" class="menu-item">Logout</a>
-    <span id="loggedInUser" class="menu-item"></span>
-    {{else}}
-        <a href="#/home" id="linkHome" class="menu-item" >Home</a>
-        <a href="#/login" id="linkLogin" class="menu-item">Login</a>
-        <a href="#/registration" id="linkRegister" class="menu-item">Register</a>
-    {{/if}}
+<!--&lt;!&ndash; Navigation &ndash;&gt;-->
+        <!--{{#if user}}-->
+<!--<a href="#/home" id="linkHome" class="menu-item">Home</a>-->
+<!--<a href="#" id="linkListAds" class="menu-item">Categories</a>-->
+<!--<a href="#" id="linkContactUs" class="menu-item">Contact Us</a>-->
+<!--<a href="#" id="linkCreateAd" class="menu-item">Create New Advertisement</a>-->
+<!--<a href="#/logout" id="linkLogout" class="menu-item">Logout</a>-->
+<!--<span id="loggedInUser" class="menu-item"></span>-->
+        <!--{{else}}-->
+<!--<a href="#/home" id="linkHome" class="menu-item">Home</a>-->
+<!--<a href="#/login" id="linkLogin" class="menu-item">Login</a>-->
+<!--<a href="#/registration" id="linkRegister" class="menu-item">Register</a>-->
+        <!--{{/if}}-->
+<!--</header>-->
+<header style="padding-bottom: 10px">
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#/home" class="navbar-left hvr-shrink">
+                    <img src="background/logo.png" width="175px">
+                </a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <div class="navbar-form" role="search">
+                        <div class="input-group">
+                            <input id="searchBar" value="" type="text" class="form-control" placeholder="Search"
+                                   name="tags">
+                            <span class="input-group-btn">
+                                    <a id="button" href="" type="submit" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-search"></span> Search
+                                    </a>
+                                    </span>
+                        </div>
+                    </div>
+                </li>
+                {{#if isAdmin}}
+                    <li class="dropdown" id="admin">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-expanded="false">
+                            <span class="badge">{{reportsCount}}</span> Admin<span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/admin/user/all">Users</a></li>
+                            <li><a href="/admin/category/all">Categories</a></li>
+                            <li><a href="/admin/resolution/all">Resolutions</a></li>
+                            <li><a href="/admin/report/all">Reports</a></li>
+                        </ul>
+                    </li>
+                {{/if}}
+                {{#if user}}
+                    <li>
+                        <a href="/user/details/{{loggedUser.nickname}}">
+                            <span class="glyphicon glyphicon-user"></span> Welcome, {{user}}
+                        </a>
+                    </li>
+                    <li id="upload">
+                        <a href="/article/create">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#/logout">
+                            <span class="glyphicon glyphicon-log-out"></span> Logout
+                        </a>
+                    </li>
+                </ul>
+                {{/if}}
+                {{#unless user}}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id="register">
+                            <a href="#/registration">
+                                <span class="glyphicon glyphicon-pencil"></span> Register
+                            </a>
+                        </li>
+                        <li id="login">
+                            <a href="#/login">
+                                <span class="glyphicon glyphicon-log-in"></span> Login
+                            </a>
+                        </li>
+                    </ul>
+                {{/unless}}
+            </div>
+        </div>
+    </div>
 </header>
+<div id="notifications" style="padding-top: 75px">
+    <div id="loadingBox" class="notification"><span>Loading …</span></div>
+    <div id="infoBox" class="notification"><span>Info</span></div>
+    <div id="errorBox" class="notification"><span>Error</span></div>
+</div>
