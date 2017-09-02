@@ -59,10 +59,10 @@
                         </ul>
                     </li>
                 {{/if}}
-                {{#if user}}
+                {{#if username}}
                     <li>
-                        <a href="/user/details/{{loggedUser.nickname}}">
-                            <span class="glyphicon glyphicon-user"></span> Welcome, {{user}}
+                        <a href="#/user/details/{{username}}">
+                            <span class="glyphicon glyphicon-user"></span> Welcome, {{username}}
                         </a>
                     </li>
                     <li id="upload">
@@ -76,8 +76,7 @@
                         </a>
                     </li>
                 </ul>
-                {{/if}}
-                {{#unless user}}
+                {{else}}
                     <ul class="nav navbar-nav navbar-right">
                         <li id="register">
                             <a href="#/registration">
@@ -90,7 +89,7 @@
                             </a>
                         </li>
                     </ul>
-                {{/unless}}
+                {{/if}}
             </div>
         </div>
     </div>

@@ -15,17 +15,73 @@ $(() => {
         this.post('#/registration', handleRegister);
 
         this.get('#/logout', handleLogout);
+        
+        this.get('#/user/details/:username', displayUserProfil);
 
-        function checkUserNameAndPassword(username, password) {
-            let usernameRegex = /[A-z]{3}/g;
-            let passRegex = /[A-z\d]{6}/g;
+        this.get('#/user/edit/:username', displayEditUser);
 
-            return (usernameRegex.test(username) && passRegex.test(password));
+        this.post('#/user/edit/:username', handleEditUser);
+
+        function handleEditUser(ctx) {
+            let username = ctx.params.username;
+            let avatar = ctx.params.avatar;
+            let email = ctx.params.email;
+            let fName = ctx.params.firstName;
+            let lName = ctx.params.lastName;
+            let phone = ctx.params.phone;
+            auth.editUser(username, avatar, email, phone, fName, lName).then(function (userInfo) {
+                    notifications.showInfo('User registration successful.');
+                    auth.saveSession(userInfo);
+                    ctx.redirect(`#/user/details/${username}`);
+                }).catch(notifications.handleError);
+        }
+        
+        function displayUserProfil(ctx) {
+            if (auth.isAuthed()) {
+                ctx.username = sessionStorage.getItem('username');
+            }
+            auth.userInfo().then(function (data) {
+                if( data._id === sessionStorage.getItem('id')) {
+                    ctx.isOuner = true;
+                } else {
+                    ctx.isOuner = '';
+                }
+                ctx.data = data;
+                ctx.loadPartials({
+                    header: './temp/common/header.hbs',
+                    footer: './temp/common/footer.hbs',
+                    homeForm: './temp/homePage/homeForm.hbs',
+                    content: './temp/userProfil/index.hbs'
+                }).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            })
+        }
+
+        function displayEditUser(ctx) {
+            if (auth.isAuthed()) {
+                ctx.username = sessionStorage.getItem('username');
+            }
+            auth.userInfo().then(function (data) {
+                if( data._id !== sessionStorage.getItem('id')) {
+                    ctx.redirect('#/home');
+                }
+                ctx.data = data;
+                ctx.loadPartials({
+                    header: './temp/common/header.hbs',
+                    footer: './temp/common/footer.hbs',
+                    homeForm: './temp/homePage/homeForm.hbs',
+                    regForm: './temp/userProfil/editProfil/form.hbs',
+                    content: './temp/userProfil/editProfil/index.hbs'
+                }).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            })
         }
 
         function displayHome(ctx) {
             if (auth.isAuthed()) {
-                ctx.user = sessionStorage.getItem('username');
+                ctx.username = sessionStorage.getItem('username');
             }
 
             ctx.loadPartials({
@@ -76,6 +132,12 @@ $(() => {
         function handleRegister(ctx) {
             let username = ctx.params.username;
             let password = ctx.params.passwd;
+            let avatar = ctx.params.avatar;
+            let email = ctx.params.email;
+            let fName = ctx.params.firstName;
+            let lName = ctx.params.lastName;
+            let phone = ctx.params.phone;
+
             let confirmPassword = ctx.params.confirmPasswd;
 
             if (password !== confirmPassword) {
@@ -84,7 +146,7 @@ $(() => {
             }
 
             if (checkUserNameAndPassword(username, password)) {
-                auth.register(username, password).then(function (userInfo) {
+                auth.register(username, password, avatar, email, phone, fName, lName).then(function (userInfo) {
                     notifications.showInfo('User registration successful.');
                     auth.saveSession(userInfo);
                     ctx.redirect("#/home");
@@ -100,6 +162,13 @@ $(() => {
                 notifications.showInfo('Logout successful.');
                 ctx.redirect("#/home");
             }).catch(notifications.handleError);
+        }
+
+        function checkUserNameAndPassword(username, password) {
+            let usernameRegex = /[A-z]{3}/g;
+            let passRegex = /[A-z\d]{6}/g;
+
+            return (usernameRegex.test(username) && passRegex.test(password));
         }
     });
     app.run();
