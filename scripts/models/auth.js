@@ -24,19 +24,17 @@ let auth = (() => {
         return requester.post('user', '_logout', {authtoken: sessionStorage.getItem('authtoken')});
     }
 
-    function userInfo() {
-        let endpoint = sessionStorage.getItem('id');
-        return requester.get('user', endpoint);
+    function getUserInfo(username) {
+        return requester.get('user', `?query={"username":"${username}"}`);
     }
-    
+
     function editUser(username, avatar, email, phone, fName, lName, points) {
         let id = sessionStorage.getItem('id');
         return requester.update('user', id, {username, avatar, email, phone, fName, lName, points})
     }
 
-
     return {
-        userInfo,
+        getUserInfo,
         saveSession,
         login,
         register,

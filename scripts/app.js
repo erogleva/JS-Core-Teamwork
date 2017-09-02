@@ -15,78 +15,16 @@ $(() => {
         this.post('#/registration', handleRegister);
 
         this.get('#/logout', handleLogout);
-        
-        this.get('#/user/details/:username', displayUserProfil);
+
+        this.get('#/user/details/:username', displayUserProfile);
 
         this.get('#/user/edit/:username', displayEditUser);
 
         this.post('#/user/edit/:username', handleEditUser);
 
-        function handleEditUser(ctx) {
-            let username = ctx.params.username;
-            let avatar = ctx.params.avatar;
-            let email = ctx.params.email;
-            let fName = ctx.params.firstName;
-            let lName = ctx.params.lastName;
-            let phone = ctx.params.phone;
-            auth.userInfo().then(function (data) {
-                let points = data.points;
-                auth.editUser(username, avatar, email, phone, fName, lName, points).then(function (userInfo) {
-                    notifications.showInfo('User registration successful.');
-                    auth.saveSession(userInfo);
-                    ctx.redirect(`#/user/details/${username}`);
-                }).catch(notifications.handleError)
-            }).catch(notifications.handleError);
-        }
-        
-        function displayUserProfil(ctx) {
-            if (auth.isAuthed()) {
-                ctx.username = sessionStorage.getItem('username');
-            }
-            auth.userInfo().then(function (data) {
-                if( data._id === sessionStorage.getItem('id')) {
-                    ctx.isOuner = true;
-                } else {
-                    ctx.isOuner = '';
-                }
-                ctx.data = data;
-                ctx.loadPartials({
-                    header: './temp/common/header.hbs',
-                    footer: './temp/common/footer.hbs',
-                    homeForm: './temp/homePage/homeForm.hbs',
-                    leftColum: './temp/common/leftColum.hbs',
-                    content: './temp/userProfil/index.hbs'
-                }).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            })
-        }
-
-        function displayEditUser(ctx) {
-            if (auth.isAuthed()) {
-                ctx.username = sessionStorage.getItem('username');
-            }
-            auth.userInfo().then(function (data) {
-                if( data._id !== sessionStorage.getItem('id')) {
-                    ctx.redirect('#/home');
-                }
-                ctx.data = data;
-                ctx.loadPartials({
-                    header: './temp/common/header.hbs',
-                    footer: './temp/common/footer.hbs',
-                    homeForm: './temp/homePage/homeForm.hbs',
-                    regForm: './temp/userProfil/editProfil/form.hbs',
-                    leftColum: './temp/common/leftColum.hbs',
-                    content: './temp/userProfil/editProfil/index.hbs'
-                }).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            })
-        }
-
         function displayHome(ctx) {
             if (auth.isAuthed()) {
-                ctx.username = sessionStorage.getItem('username');
+                ctx.loggedUsername = sessionStorage.getItem('username');
             }
 
             ctx.loadPartials({
@@ -94,7 +32,8 @@ $(() => {
                 footer: './temp/common/footer.hbs',
                 homeForm: './temp/homePage/homeForm.hbs',
                 adPreview: './temp/homePage/adPreview.hbs',
-                content: './temp/homePage/home.hbs'
+                content: './temp/homePage/home.hbs',
+                leftColumn: './temp/common/leftColumn.hbs'
             }).then(function () {
                 this.partial('./temp/common/main.hbs');
             })
@@ -102,7 +41,7 @@ $(() => {
 
         function displayLogin(ctx) {
             ctx.loadPartials({
-                leftColum: './temp/common/leftColum.hbs',
+                leftColumn: './temp/common/leftColumn.hbs',
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
                 loginForm: './temp/loginPage/form.hbs',
@@ -126,7 +65,7 @@ $(() => {
 
         function displayRegister(ctx) {
             ctx.loadPartials({
-                leftColum: './temp/common/leftColum.hbs',
+                leftColumn: './temp/common/leftColumn.hbs',
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
                 regForm: './temp/registrationPage/form.hbs',
@@ -168,6 +107,76 @@ $(() => {
                 sessionStorage.clear();
                 notifications.showInfo('Logout successful.');
                 ctx.redirect("#/home");
+            }).catch(notifications.handleError);
+        }
+
+        function displayUserProfile(ctx) {
+            let username = ctx.params.username;
+
+            if (auth.isAuthed()) {
+                ctx.loggedUsername = sessionStorage.getItem('username');
+            }
+
+            auth.getUserInfo(username).then(function (data) {
+                if (data[0]._id === sessionStorage.getItem('id')) {
+                    ctx.isOwner = true;
+                } else {
+                    ctx.isOwner = '';
+                }
+
+                ctx.data = data[0];
+                ctx.loadPartials({
+                    header: './temp/common/header.hbs',
+                    footer: './temp/common/footer.hbs',
+                    homeForm: './temp/homePage/homeForm.hbs',
+                    leftColumn: './temp/common/leftColumn.hbs',
+                    content: './temp/userProfile/index.hbs'
+                }).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            })
+        }
+
+        function displayEditUser(ctx) {
+            if (!auth.isAuthed()) {
+                ctx.redirect("#/home");
+            }
+
+            let username = ctx.params.username;
+            ctx.loggedUsername = sessionStorage.getItem('username');
+
+            auth.getUserInfo(username).then(function (data) {
+                if (data[0]._id !== sessionStorage.getItem('id')) {
+                    ctx.redirect('#/home');
+                    return;
+                }
+
+                ctx.data = data[0];
+                ctx.loadPartials({
+                    header: './temp/common/header.hbs',
+                    footer: './temp/common/footer.hbs',
+                    homeForm: './temp/homePage/homeForm.hbs',
+                    regForm: './temp/userProfile/editProfile/form.hbs',
+                    leftColumn: './temp/common/leftColumn.hbs',
+                    content: './temp/userProfile/editProfile/index.hbs'
+                }).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            })
+        }
+
+        function handleEditUser(ctx) {
+            let avatar = ctx.params.avatar;
+            let fName = ctx.params.firstName;
+            let lName = ctx.params.lastName;
+            let phone = ctx.params.phone;
+
+            auth.getUserInfo(ctx.params.username).then(function (data) {
+                auth.editUser(data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points).then(function (userInfo) {
+                    notifications.showInfo('Successfully edited.');
+                    auth.saveSession(userInfo);
+                    ctx.redirect(`#/user/details/${data[0].username}`);
+                }).catch(notifications.handleError)
             }).catch(notifications.handleError);
         }
 
