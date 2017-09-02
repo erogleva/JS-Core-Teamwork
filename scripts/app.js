@@ -29,11 +29,14 @@ $(() => {
             let fName = ctx.params.firstName;
             let lName = ctx.params.lastName;
             let phone = ctx.params.phone;
-            auth.editUser(username, avatar, email, phone, fName, lName).then(function (userInfo) {
+            auth.userInfo().then(function (data) {
+                let points = data.points;
+                auth.editUser(username, avatar, email, phone, fName, lName, points).then(function (userInfo) {
                     notifications.showInfo('User registration successful.');
                     auth.saveSession(userInfo);
                     ctx.redirect(`#/user/details/${username}`);
-                }).catch(notifications.handleError);
+                }).catch(notifications.handleError)
+            }).catch(notifications.handleError);
         }
         
         function displayUserProfil(ctx) {
@@ -99,6 +102,7 @@ $(() => {
 
         function displayLogin(ctx) {
             ctx.loadPartials({
+                leftColum: './temp/common/leftColum.hbs',
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
                 loginForm: './temp/loginPage/form.hbs',
@@ -122,6 +126,7 @@ $(() => {
 
         function displayRegister(ctx) {
             ctx.loadPartials({
+                leftColum: './temp/common/leftColum.hbs',
                 header: './temp/common/header.hbs',
                 footer: './temp/common/footer.hbs',
                 regForm: './temp/registrationPage/form.hbs',
