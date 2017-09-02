@@ -22,31 +22,29 @@ $(() => {
 
         this.post('#/user/edit/:username', handleEditUser);
 
+        this.get('#/create', displayCreateAd);
+
         function displayHome(ctx) {
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
             }
 
-            ctx.loadPartials({
-                header: './temp/common/header.hbs',
-                footer: './temp/common/footer.hbs',
-                homeForm: './temp/homePage/homeForm.hbs',
-                adPreview: './temp/homePage/adPreview.hbs',
-                content: './temp/homePage/home.hbs',
-                leftColumn: './temp/common/leftColumn.hbs'
-            }).then(function () {
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["homeForm"] = './temp/homePage/homeForm.hbs';
+            partialsObject["adPreview"] = './temp/homePage/adPreview.hbs';
+            partialsObject["content"] = './temp/homePage/home.hbs';
+
+            ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
             })
         }
 
         function displayLogin(ctx) {
-            ctx.loadPartials({
-                leftColumn: './temp/common/leftColumn.hbs',
-                header: './temp/common/header.hbs',
-                footer: './temp/common/footer.hbs',
-                loginForm: './temp/loginPage/form.hbs',
-                content: './temp/loginPage/index.hbs'
-            }).then(function () {
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["loginForm"] = './temp/loginPage/form.hbs';
+            partialsObject["content"] = './temp/loginPage/index.hbs';
+
+            ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
             })
         }
@@ -64,13 +62,11 @@ $(() => {
         }
 
         function displayRegister(ctx) {
-            ctx.loadPartials({
-                leftColumn: './temp/common/leftColumn.hbs',
-                header: './temp/common/header.hbs',
-                footer: './temp/common/footer.hbs',
-                regForm: './temp/registrationPage/form.hbs',
-                content: './temp/registrationPage/index.hbs'
-            }).then(function () {
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["regForm"] = './temp/registrationPage/form.hbs';
+            partialsObject["content"] = './temp/registrationPage/index.hbs';
+
+            ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
             })
         }
@@ -78,13 +74,12 @@ $(() => {
         function handleRegister(ctx) {
             let username = ctx.params.username;
             let password = ctx.params.passwd;
+            let confirmPassword = ctx.params.confirmPasswd;
             let avatar = ctx.params.avatar;
             let email = ctx.params.email;
             let fName = ctx.params.firstName;
             let lName = ctx.params.lastName;
             let phone = ctx.params.phone;
-
-            let confirmPassword = ctx.params.confirmPasswd;
 
             if (password !== confirmPassword) {
                 notifications.showError("Passwords do not match.");
@@ -120,18 +115,14 @@ $(() => {
             auth.getUserInfo(username).then(function (data) {
                 if (data[0]._id === sessionStorage.getItem('id')) {
                     ctx.isOwner = true;
-                } else {
-                    ctx.isOwner = '';
                 }
 
                 ctx.data = data[0];
-                ctx.loadPartials({
-                    header: './temp/common/header.hbs',
-                    footer: './temp/common/footer.hbs',
-                    homeForm: './temp/homePage/homeForm.hbs',
-                    leftColumn: './temp/common/leftColumn.hbs',
-                    content: './temp/userProfile/index.hbs'
-                }).then(function () {
+
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["content"] = './temp/userProfile/index.hbs';
+
+                ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
                 })
             })
@@ -140,6 +131,7 @@ $(() => {
         function displayEditUser(ctx) {
             if (!auth.isAuthed()) {
                 ctx.redirect("#/home");
+                return;
             }
 
             let username = ctx.params.username;
@@ -152,14 +144,12 @@ $(() => {
                 }
 
                 ctx.data = data[0];
-                ctx.loadPartials({
-                    header: './temp/common/header.hbs',
-                    footer: './temp/common/footer.hbs',
-                    homeForm: './temp/homePage/homeForm.hbs',
-                    regForm: './temp/userProfile/editProfile/form.hbs',
-                    leftColumn: './temp/common/leftColumn.hbs',
-                    content: './temp/userProfile/editProfile/index.hbs'
-                }).then(function () {
+
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["editForm"] = './temp/userProfile/editProfile/form.hbs';
+                partialsObject["content"] = './temp/userProfile/editProfile/index.hbs';
+
+                ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
                 })
             })
@@ -180,11 +170,38 @@ $(() => {
             }).catch(notifications.handleError);
         }
 
+        function displayCreateAd(ctx) {
+            if (!auth.isAuthed()) {
+                ctx.redirect("#/home");
+                return;
+            }
+
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["createForm"] = './temp/ads/create/form.hbs';
+            partialsObject["content"] = './temp/ads/create/index.hbs';
+
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            })
+        }
+
         function checkUserNameAndPassword(username, password) {
             let usernameRegex = /[A-z]{3}/g;
             let passRegex = /[A-z\d]{6}/g;
 
             return (usernameRegex.test(username) && passRegex.test(password));
+        }
+
+        function getCommonElements(ctx) {
+            if (auth.isAuthed()) {
+                ctx.loggedUsername = sessionStorage.getItem('username');
+            }
+
+            return {
+                'header': './temp/common/header.hbs',
+                'footer': './temp/common/footer.hbs',
+                'leftColumn': './temp/common/leftColumn.hbs'
+            };
         }
     });
     app.run();

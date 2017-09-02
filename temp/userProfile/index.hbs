@@ -4,8 +4,9 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-md-3 col-lg-3 " align="center"><img alt="User Pic" src="{{data.avatar}}"
-                                                                class="img-circle img-responsive"></div>
+            <div class="col-md-3 col-lg-3 " align="center">
+                <img alt="User Pic" src="{{data.avatar}}" class="img-circle img-responsive">
+            </div>
             <div class=" col-md-9 col-lg-9 ">
                 <table class="table table-user-information">
                     <tbody>
@@ -17,7 +18,6 @@
                         <td>Points</td>
                         <td>{{data.points}}</td>
                     </tr>
-                    <tr>
                     {{#if data.email}}
                         <tr>
                             <td>Email</td>
@@ -25,18 +25,21 @@
                         </tr>
                     {{/if}}
                     {{#if data.fName}}
-                        <td>First Name</td>
-                        <td>{{data.fName}}</td>
+                        <tr>
+                            <td>First Name</td>
+                            <td>{{data.fName}}</td>
                         </tr>
                     {{/if}}
                     {{#if data.lName}}
-                        <td>Last Name</td>
-                        <td>{{data.lName}}</td>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>{{data.lName}}</td>
                         </tr>
                     {{/if}}
                     {{#if data.phone}}
-                        <td>Phone Number</td>
-                        <td>{{data.phone}}</td>
+                        <tr>
+                            <td>Phone Number</td>
+                            <td>{{data.phone}}</td>
                         </tr>
                     {{/if}}
                     </tbody>
@@ -46,15 +49,15 @@
             </div>
         </div>
     </div>
-    <div class="panel-footer">
-        <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button"
-           class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i> Messages</a>
-        {{#if isOwner}}
+    {{#if isOwner}}
+        <div class="panel-footer">
+            <a type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i> Messages</a>
             <span class="pull-right">
-                            <a href="#/user/edit/{{loggedUsername}}" data-original-title="Edit this user"
-                               data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i
-                                    class="glyphicon glyphicon-edit"></i> Edit profile</a>
-                        </span>
-        {{/if}}
-    </div>
+                <a href="#/user/edit/{{loggedUsername}}" type="button" class="btn btn-sm btn-warning">
+                    <i class="glyphicon glyphicon-edit"></i> Edit profile
+                </a>
+            </span>
+
+        </div>
+    {{/if}}
 </div>

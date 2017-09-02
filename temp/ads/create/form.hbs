@@ -1,0 +1,81 @@
+<form class="form-horizontal" method="POST" action="#/create">
+    <fieldset>
+        <legend>Create Ad</legend>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Title</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="title" placeholder="Title" name="title">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Description</label>
+            <div class="col-sm-4">
+                <textarea class="form-control" id="description" name="description" rows="10"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label"
+                   for="category">Brand</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="select" name="brand">
+                <!--{{#each categories}}-->
+                    <!--<option-->
+                    <!--value="{{this.id}}">{{this.name}}-->
+                    <!--</option>-->
+                        <!--{{/each}}-->
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label"
+                   for="category">Model</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="select" name="model">
+                <!--{{#each categories}}-->
+                    <!--<option-->
+                    <!--value="{{this.id}}">{{this.name}}-->
+                    <!--</option>-->
+                        <!--{{/each}}-->
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label"
+                   for="category">City</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="select" name="city">
+                <!--{{#each categories}}-->
+                    <!--<option-->
+                    <!--value="{{this.id}}">{{this.name}}-->
+                    <!--</option>-->
+                        <!--{{/each}}-->
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Mileage</label>
+            <div class="col-sm-4 ">
+                <input type="number" class="form-control" id="mileage" placeholder="Mileage (in km.)" name="mileage">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Images</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="images" placeholder="Images URLs (, separated)"
+                       name="images">
+            </div>
+        </div>
+        <!--<div class="form-group">-->
+        <!--<label class="control-label col-sm-4">Picture</label>-->
+        <!--<div class="col-sm-4">-->
+        <!--<input class="form-control" type="file" name="photo" required>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-4">
+                <a class="btn btn-default" href="#/home">Cancel</a>
+                <button type="submit" class="btn btn-success">Create</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
