@@ -16,7 +16,6 @@ let auth = (() => {
 
     function register(username, password) {
         let points = 10;
-
         return requester.post('user', '', {username, password, points}, 'basic');
     }
 
