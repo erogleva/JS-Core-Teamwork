@@ -51,6 +51,7 @@ $(() => {
                     header: './temp/common/header.hbs',
                     footer: './temp/common/footer.hbs',
                     homeForm: './temp/homePage/homeForm.hbs',
+                    leftColum: './temp/common/leftColum.hbs',
                     content: './temp/userProfil/index.hbs'
                 }).then(function () {
                     this.partial('./temp/common/main.hbs');
@@ -72,6 +73,7 @@ $(() => {
                     footer: './temp/common/footer.hbs',
                     homeForm: './temp/homePage/homeForm.hbs',
                     regForm: './temp/userProfil/editProfil/form.hbs',
+                    leftColum: './temp/common/leftColum.hbs',
                     content: './temp/userProfil/editProfil/index.hbs'
                 }).then(function () {
                     this.partial('./temp/common/main.hbs');
