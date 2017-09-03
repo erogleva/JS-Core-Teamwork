@@ -20,6 +20,11 @@ let msg = (() => {
         return requester.get('appdata', endpoint);
     }
 
+    function createNewMsg(recipient, sender, title, text) {
+        let isOpen = "unread";
+        return requester.post('appdata', 'msg', {recipient, sender, title, text, isOpen})
+    }
+
     function sendMsg(answer, sender, recipient, text) {
         return requester.post('appdata', 'msg', {answer, sender, recipient, text});
     }
@@ -29,5 +34,6 @@ let msg = (() => {
         foundAnswer,
         sendMsg,
         getSendMsg,
+        createNewMsg
     }
 })();

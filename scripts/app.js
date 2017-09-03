@@ -29,6 +29,32 @@ $(() => {
         this.get('#/user/msg/signleMsg/:id', displaySingleMsg);
         this.post('#/user/msg/signleMsg/:id', handleSingleMsg);
 
+        this.get('#/sendMsg/:username', displaySendMsg);
+        this.post('#/sendMsg/:username', handledSendMsg);
+
+        function handledSendMsg(ctx) {
+            let recipient = ctx.params.username;
+            let sender = sessionStorage.getItem('username');
+            let text = ctx.params.description;
+            let title = ctx.params.title;
+
+
+           msg.createNewMsg(recipient, sender, title, text).then(function (data) {
+               notifications.showInfo('Съобщението е изпратено успешно');
+               ctx.redirect(`#/user/msg/${sender}`);
+            }).catch(notifications.handleError)
+        }
+
+        function displaySendMsg(ctx) {
+            ctx.recipient  = ctx.params.username;
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["content"] = './temp/sendMsg/index.hbs';
+            partialsObject["sendMsgForm"] = './temp/sendMsg/form.hbs';
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            })
+        }
+
         function handleSingleMsg(ctx) {
             let sender = sessionStorage.getItem('username');
             let answer = ctx.params.id;
@@ -84,6 +110,8 @@ $(() => {
                      })
             })
         }
+
+
 
         function displayMsg(ctx) {
             if (auth.isAuthed()) {

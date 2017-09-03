@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h3 class="panel-title"><b>{{loggedUsername}}</b>`s profile</h3>
+        <h3 class="panel-title"><b>{{data.username}}</b>`s profile</h3>
     </div>
     <div class="panel-body">
         <div class="row">
@@ -45,7 +45,10 @@
                     </tbody>
                 </table>
                 <a href="#" class="btn btn-primary">My Sales Performance</a>
-                <a href="#" class="btn btn-primary">Team Sales Performance</a>
+    {{#if isOwner}}
+    {{else}}
+                <a href="#/sendMsg/{{data.username}}" class="btn btn-success"><i class="glyphicon glyphicon-envelope"></i> Send Messages</a>
+    {{/if}}
             </div>
         </div>
     </div>
@@ -57,7 +60,7 @@
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
             </span>
-
         </div>
     {{/if}}
+
 </div>
