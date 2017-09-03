@@ -24,9 +24,11 @@ $(() => {
 
         this.get('#/create', displayCreateAd);
 
+        this.post('#/create', handleCreateAd);
+
         this.get('#/user/messages', displayMessages);
 
-        this.get('#/user/message/:id', displayMessage);
+        this.get('#/user/message/:id', displayMessageThread);
 
         this.post('#/user/message/:id', handleSendMessageInThread);
 
@@ -35,23 +37,47 @@ $(() => {
         this.post('#/message/send/:username', handleNewMessageThread);
 
         function displayHome(ctx) {
-            if (auth.isAuthed()) {
-                ctx.loggedUsername = sessionStorage.getItem('username');
+            if (!auth.isAuthed()) {
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["content"] = './temp/home/notLoggedIndex.hbs';
+
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                });
+
+                return;
             }
 
-            let partialsObject = getCommonElements(ctx);
-            partialsObject["homeForm"] = './temp/homePage/homeForm.hbs';
-            partialsObject["content"] = './temp/homePage/home.hbs';
+            adService.getAds().then(function (data) {
+                for (let ad of data) {
+                    let images = JSON.parse(ad.images);
 
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
+                    if (images[0] === "") {
+                        ad.image = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
+                    } else {
+                        ad.image = images[0];
+                    }
+
+                    ad.description = ad.description.substring(0, 15) + "...";
+                }
+
+                ctx.ads = data;
+
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["ads"] = './temp/ads/ads.hbs';
+                partialsObject["ad"] = './temp/ads/ad.hbs';
+                partialsObject["content"] = './temp/home/index.hbs';
+
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            });
         }
 
         function displayLogin(ctx) {
             let partialsObject = getCommonElements(ctx);
-            partialsObject["loginForm"] = './temp/loginPage/form.hbs';
-            partialsObject["content"] = './temp/loginPage/index.hbs';
+            partialsObject["loginForm"] = './temp/login/form.hbs';
+            partialsObject["content"] = './temp/login/index.hbs';
 
             ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
@@ -72,8 +98,8 @@ $(() => {
 
         function displayRegister(ctx) {
             let partialsObject = getCommonElements(ctx);
-            partialsObject["regForm"] = './temp/registrationPage/form.hbs';
-            partialsObject["content"] = './temp/registrationPage/index.hbs';
+            partialsObject["regForm"] = './temp/registration/form.hbs';
+            partialsObject["content"] = './temp/registration/index.hbs';
 
             ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
@@ -126,7 +152,7 @@ $(() => {
                 ctx.data = data[0];
 
                 let partialsObject = getCommonElements(ctx);
-                partialsObject["content"] = './temp/userProfile/index.hbs';
+                partialsObject["content"] = './temp/profile/index.hbs';
                 ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
                 })
@@ -151,8 +177,8 @@ $(() => {
                 ctx.data = data[0];
 
                 let partialsObject = getCommonElements(ctx);
-                partialsObject["editForm"] = './temp/userProfile/editProfile/form.hbs';
-                partialsObject["content"] = './temp/userProfile/editProfile/index.hbs';
+                partialsObject["editForm"] = './temp/profile/edit/form.hbs';
+                partialsObject["content"] = './temp/profile/edit/index.hbs';
 
                 ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
@@ -190,6 +216,26 @@ $(() => {
             })
         }
 
+        function handleCreateAd(ctx) {
+            let title = ctx.params.title;
+            let description = ctx.params.description;
+            let brand = $("#brand").find(":selected").text();
+            let model = $("#model").find(":selected").text();
+            let city = $("#city").find(":selected").text();
+            let mileage = parseInt(ctx.params.mileage);
+            let price = parseFloat(ctx.params.price);
+            let imageUrls = ctx.params.images.split(", ");
+            let images = [];
+
+            for (let imageUrl of imageUrls) {
+                images.push(imageUrl);
+            }
+
+            adService.createAd(title, description, brand, model, city, mileage, price, images).then(function () {
+                ctx.redirect("#/home");
+            })
+        }
+
         function displayMessages(ctx) {
             if (!auth.isAuthed()) {
                 ctx.redirect('#/home');
@@ -224,8 +270,8 @@ $(() => {
                     ctx.data = allMessages;
 
                     let partialsObject = getCommonElements(ctx);
-                    partialsObject["content"] = './temp/userProfile/msgBox/index.hbs';
-                    partialsObject["msgTemp"] = './temp/userProfile/msgBox/msgTemp.hbs';
+                    partialsObject["content"] = './temp/messages/inbox/index.hbs';
+                    partialsObject["message"] = './temp/messages/inbox/message.hbs';
 
                     ctx.loadPartials(partialsObject).then(function () {
                         this.partial('./temp/common/main.hbs');
@@ -234,7 +280,7 @@ $(() => {
             });
         }
 
-        function displayMessage(ctx) {
+        function displayMessageThread(ctx) {
             let id = ctx.params.id;
 
             msgService.getSingleMessage(id).then(function (data) {
@@ -269,8 +315,8 @@ $(() => {
                     ctx.answer = answer;
 
                     let partialsObject = getCommonElements(ctx);
-                    partialsObject["content"] = './temp/userProfile/msgBox/singleMsg.hbs';
-                    partialsObject["sendMsg"] = './temp/userProfile/msgBox/singleMsg/form.hbs';
+                    partialsObject["content"] = './temp/messages/thread/index.hbs';
+                    partialsObject["form"] = './temp/messages/thread/form.hbs';
 
                     ctx.loadPartials(partialsObject).then(function () {
                         this.partial('./temp/common/main.hbs');
@@ -283,8 +329,8 @@ $(() => {
             ctx.recipient = ctx.params.username;
 
             let partialsObject = getCommonElements(ctx);
-            partialsObject["content"] = './temp/sendMsg/index.hbs';
-            partialsObject["sendMsgForm"] = './temp/sendMsg/form.hbs';
+            partialsObject["content"] = './temp/messages/send/index.hbs';
+            partialsObject["form"] = './temp/messages/send/form.hbs';
 
             ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
