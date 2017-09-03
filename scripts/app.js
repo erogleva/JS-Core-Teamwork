@@ -24,6 +24,86 @@ $(() => {
 
         this.get('#/create', displayCreateAd);
 
+        this.get('#/user/msg/:username', displayMsg);
+
+        this.get('#/user/msg/signleMsg/:id', displaySingleMsg);
+        this.post('#/user/msg/signleMsg/:id', handleSingleMsg);
+
+        function handleSingleMsg(ctx) {
+            let sender = sessionStorage.getItem('username');
+            let answer = ctx.params.id;
+            let text = ctx.params.msgText;
+            let recipient = ctx.params.recipient;
+
+            msg.sendMsg(answer, sender, recipient, text).then(function (data) {
+                ctx.redirect(`#/user/msg/signleMsg/${answer}`);
+            })
+
+        }
+
+        function displaySingleMsg(ctx) {
+            let idMsg = ctx.params.id;
+            msg.getSingleMsg(idMsg).then(function (data) {
+                data[0]['time'] = calcTime(data[0]._kmd.ect);
+                ctx.data = data[0];
+                     msg.foundAnswer(idMsg).then(function (answer) {
+                         if (answer.length !== 0) {
+                             for (let el of answer) {
+                                 el['time'] = calcTime(el._kmd.ect);
+                                if(el.sender === sessionStorage.getItem('username')) {
+                                    el.style = 'right';
+                                } else {
+                                    el.style = 'left';
+                                }
+                             }
+                             ctx.answer = data;
+                         }
+                         ctx.answer = answer;
+                         let partialsObject = getCommonElements(ctx);
+                         partialsObject["content"] = './temp/userProfile/msgBox/singleMsg.hbs';
+                         partialsObject["sendMsg"] = './temp/userProfile/msgBox/singleMsg/form.hbs';
+                         ctx.loadPartials(partialsObject).then(function () {
+                             this.partial('./temp/common/main.hbs');
+                         })
+                     })
+            })
+        }
+
+        function displayMsg(ctx) {
+            if (auth.isAuthed()) {
+                ctx.loggedUsername = sessionStorage.getItem('username');
+            }
+            let newObj = [];
+            msg.getSendMsg().then(function (data) {
+                if (data.length !== 0) {
+                    for (let el of data) {
+                        if (el.title) {
+                            el['time'] = calcTime(el._kmd.ect);
+                            newObj.push(el);
+                        }
+                    }
+                }
+            });
+            msg.getMsg().then(function (data) {
+                if (data.length !== 0) {
+                    for (let el of data) {
+                        if(el.title) {
+                            el['time'] = calcTime(el._kmd.ect);
+                            newObj.push(el);
+                        }
+                    }
+                }
+
+                ctx.data = newObj;
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["content"] = './temp/userProfile/msgBox/index.hbs';
+                partialsObject["msgTemp"] = './temp/userProfile/msgBox/msgTemp.hbs';
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            });
+        }
+
         function displayHome(ctx) {
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
@@ -107,21 +187,17 @@ $(() => {
 
         function displayUserProfile(ctx) {
             let username = ctx.params.username;
-
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
             }
-
             auth.getUserInfo(username).then(function (data) {
                 if (data[0]._id === sessionStorage.getItem('id')) {
                     ctx.isOwner = true;
                 }
-
                 ctx.data = data[0];
 
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["content"] = './temp/userProfile/index.hbs';
-
                 ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
                 })
@@ -202,6 +278,25 @@ $(() => {
                 'footer': './temp/common/footer.hbs',
                 'leftColumn': './temp/common/leftColumn.hbs'
             };
+        }
+
+        function calcTime(dateIsoFormat) {
+            let diff = new Date - (new Date(dateIsoFormat));
+            diff = Math.floor(diff / 60000);
+            if (diff < 1) return 'less than a minute';
+            if (diff < 60) return diff + ' minute' + pluralize(diff);
+            diff = Math.floor(diff / 60);
+            if (diff < 24) return diff + ' hour' + pluralize(diff);
+            diff = Math.floor(diff / 24);
+            if (diff < 30) return diff + ' day' + pluralize(diff);
+            diff = Math.floor(diff / 30);
+            if (diff < 12) return diff + ' month' + pluralize(diff);
+            diff = Math.floor(diff / 12);
+            return diff + ' year' + pluralize(diff);
+            function pluralize(value) {
+                if (value !== 1) return 's';
+                else return '';
+            }
         }
     });
     app.run();

@@ -1,0 +1,16 @@
+{{#each data}}
+<tr class="{{isOpen}}">
+    <td class="inbox-small-cells"><i class="glyphicon glyphicon-envelope"></i>
+        <a href="#/user/msg/signleMsg/{{_id}}" class="view-message">Прочети</a>
+    </td>
+
+    <td class="view-message  inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+    <td class="view-message  dont-show">{{sender}}</td>
+    <td class="inbox-small-cells">
+    </td>
+    <td class="view-message ">{{title}}</td>
+    <td class="view-message  text-right">Получено преди {{time}}</td>
+    <td class="inbox-small-cells"></td>
+
+</tr>
+{{/each}}

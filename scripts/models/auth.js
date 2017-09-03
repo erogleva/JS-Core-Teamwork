@@ -25,6 +25,7 @@ let auth = (() => {
     }
 
     function getUserInfo(username) {
+
         return requester.get('user', `?query={"username":"${username}"}`);
     }
 
