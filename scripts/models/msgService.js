@@ -1,26 +1,27 @@
-let msg = (() => {
-    function getMsg() {
+let msgService = (() => {
+    function getReceivedMessages() {
         let username = sessionStorage.getItem('username');
-        let endpoint = `msg?query={"recipient":"${username}"}&sort={"_kmd.ect": -1}`;
-        return requester.get('appdata', endpoint);
-    }
-    function getSendMsg() {
-        let username = sessionStorage.getItem('username');
-        let endpoint = `msg?query={"sender":"${username}"}&sort={"_kmd.ect": -1}`;
+        let endpoint = `msg?query={"recipient":"${username}"}`;
         return requester.get('appdata', endpoint);
     }
 
-    function getSingleMsg(id) {
+    function getSentMessages() {
+        let username = sessionStorage.getItem('username');
+        let endpoint = `msg?query={"sender":"${username}"}`;
+        return requester.get('appdata', endpoint);
+    }
+
+    function getSingleMessage(id) {
         let endpoint = `msg?query={"_id":"${id}"}`;
         return requester.get('appdata', endpoint);
     }
 
-    function foundAnswer(id) {
+    function findAnswer(id) {
         let endpoint = `msg?query={"answer":"${id}"}`;
         return requester.get('appdata', endpoint);
     }
 
-    function createNewMsg(recipient, sender, title, text) {
+    function createNewMessageThread(recipient, sender, title, text) {
         let isOpen = "unread";
         return requester.post('appdata', 'msg', {recipient, sender, title, text, isOpen})
     }
@@ -28,12 +29,13 @@ let msg = (() => {
     function sendMsg(answer, sender, recipient, text) {
         return requester.post('appdata', 'msg', {answer, sender, recipient, text});
     }
+
     return {
-        getMsg,
-        getSingleMsg,
-        foundAnswer,
+        getReceivedMessages,
+        getSingleMessage,
+        findAnswer,
         sendMsg,
-        getSendMsg,
-        createNewMsg
+        getSentMessages,
+        createNewMessageThread
     }
 })();

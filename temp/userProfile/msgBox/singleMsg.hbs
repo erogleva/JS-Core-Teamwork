@@ -1,46 +1,40 @@
 <div class="new_message_head">
     <div class="pull-left">
-        <i class="fa fa-plus-square-o" aria-hidden="true"></i> Title: {{data.title}}
+        <i class="fa fa-plus-square-o" aria-hidden="true"></i>Title: {{data.title}}
     </div>
     <div class="pull-right">
         <div class="dropdown"></div>
     </div>
 </div>
-
-
 <div class="chat_area">
     <ul class="list-unstyled">
-
         <li class="left clearfix">
                      <span class="chat-img1 pull-{{data.style}}">
-                     <a href="#/user/details/{{data.sender}}"><img src="https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg"
-                          alt="{{data.sender}} Avatar" class="img-circle"></a>
+                     <a href="#/user/details/{{data.sender}}"><img
+                             src="https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg"
+                             alt="{{data.sender}} Avatar" class="img-circle"></a>
                      </span>
             <div class="chat-body1 clearfix">
                 <p align="{{data.style}}">{{data.text}}</p>
                 <div class="chat_time pull-{{data.style}}">{{data.time}} Ago</div>
             </div>
         </li>
-
         {{#each answer}}
-        <li class="left clearfix">
-
+            <li class="left clearfix">
                      <span class="chat-img1 pull-{{style}}">
                           <a href="#/user/details/{{sender}}">
                      <img src="{{avatar}}"
                           alt="{{sender}} Avatar" class="img-circle">
                           </a>
                      </span>
-
-            <div class="chat-body1 clearfix">
-                <p align="{{style}}">  {{text}}</p>
-                <div  class="chat_time pull-{{style}}">{{time}} Ago</div>
-            </div>
-        </li>
+                <div class="chat-body1 clearfix">
+                    <p align="{{style}}">  {{text}}</p>
+                    <div class="chat_time pull-{{style}}">{{time}} Ago</div>
+                </div>
+            </li>
         {{/each}}
-
     </ul>
-</div><!--chat_area-->
+</div>
 <div class="message_write">
-   {{>sendMsg}}
+    {{>sendMsg}}
 </div>

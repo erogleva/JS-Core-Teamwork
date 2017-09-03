@@ -1,8 +1,6 @@
-<form method="post" action="#/user/msg/signleMsg/{{data._id}}">
-    <textarea class="form-control" placeholder="type a message" id="msgText" name="msgText"></textarea>
+<form method="post" action="#/user/message/{{data._id}}">
+    <textarea class="form-control" placeholder="Type a message" id="msgText" name="msgText"></textarea>
     <input type="hidden" value="{{data.sender}}" name="recipient" id="recipient">
-
-
     <div class="clearfix"></div>
     <div class="chat_bottom">
         <input type='submit' class="pull-right btn btn-success" value="Send">

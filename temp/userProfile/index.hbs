@@ -45,22 +45,24 @@
                     </tbody>
                 </table>
                 <a href="#" class="btn btn-primary">My Sales Performance</a>
-    {{#if isOwner}}
-    {{else}}
-                <a href="#/sendMsg/{{data.username}}" class="btn btn-success"><i class="glyphicon glyphicon-envelope"></i> Send Messages</a>
-    {{/if}}
             </div>
         </div>
     </div>
     {{#if isOwner}}
         <div class="panel-footer">
-            <a href="#/user/msg/{{loggedUsername}}" stype="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i> Messages</a>
+            <a href="#/user/messages" stype="button" class="btn btn-sm btn-primary"><i
+                    class="glyphicon glyphicon-envelope"></i> Messages</a>
             <span class="pull-right">
                 <a href="#/user/edit/{{loggedUsername}}" type="button" class="btn btn-sm btn-warning">
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
             </span>
         </div>
+    {{else}}
+        <div class="panel-footer">
+            <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
+                <i class="glyphicon glyphicon-envelope"></i> Send Message
+            </a>
+        </div>
     {{/if}}
-
 </div>

@@ -24,129 +24,15 @@ $(() => {
 
         this.get('#/create', displayCreateAd);
 
-        this.get('#/user/msg/:username', displayMsg);
+        this.get('#/user/messages', displayMessages);
 
-        this.get('#/user/msg/signleMsg/:id', displaySingleMsg);
-        this.post('#/user/msg/signleMsg/:id', handleSingleMsg);
+        this.get('#/user/message/:id', displayMessage);
 
-        this.get('#/sendMsg/:username', displaySendMsg);
-        this.post('#/sendMsg/:username', handledSendMsg);
+        this.post('#/user/message/:id', handleSendMessageInThread);
 
-        function handledSendMsg(ctx) {
-            let recipient = ctx.params.username;
-            let sender = sessionStorage.getItem('username');
-            let text = ctx.params.description;
-            let title = ctx.params.title;
+        this.get('#/message/send/:username', displaySendMsg);
 
-
-           msg.createNewMsg(recipient, sender, title, text).then(function (data) {
-               notifications.showInfo('Съобщението е изпратено успешно');
-               ctx.redirect(`#/user/msg/${sender}`);
-            }).catch(notifications.handleError)
-        }
-
-        function displaySendMsg(ctx) {
-            ctx.recipient  = ctx.params.username;
-            let partialsObject = getCommonElements(ctx);
-            partialsObject["content"] = './temp/sendMsg/index.hbs';
-            partialsObject["sendMsgForm"] = './temp/sendMsg/form.hbs';
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
-        }
-
-        function handleSingleMsg(ctx) {
-            let sender = sessionStorage.getItem('username');
-            let answer = ctx.params.id;
-            let text = ctx.params.msgText;
-            let recipient = ctx.params.recipient;
-
-            msg.sendMsg(answer, sender, recipient, text).then(function (data) {
-                ctx.redirect(`#/user/msg/signleMsg/${answer}`);
-            })
-
-        }
-
-        // problem sys zaka4aneto na avataraaaa
-        function displaySingleMsg(ctx) {
-            let idMsg = ctx.params.id;
-            msg.getSingleMsg(idMsg).then(function (data) {
-                data[0]['time'] = calcTime(data[0]._kmd.ect);
-                if(data[0].sender === sessionStorage.getItem('username')) {
-                    data[0].style = 'right';
-                } else {
-                    data[0].style = 'left';
-                }
-                ctx.data = data[0];
-                     msg.foundAnswer(idMsg).then(function (answer) {
-                         if (answer.length !== 0) {
-                             for (let el of answer) {
-                                 let username = el.sender;
-                                 let d;
-                                 // Problem s vidimostta el['avatar'] e zaka4eno uj no ne se vijda. Predpolagam
-                                 // 4e e nesto ot vidimostta v promisa.
-                                 auth.getUserInfo(username).then(function (userInfo) {
-                                   el['avatar']= userInfo[0].avatar;
-                                 });
-                                 console.log(el['avatar']);
-                                 el['time'] = calcTime(el._kmd.ect);
-                                if(el.sender === sessionStorage.getItem('username')) {
-                                    el.style = 'right';
-                                } else {
-                                    el.style = 'left';
-                                }
-
-                             }
-                         }
-
-                         ctx.answer = answer;
-                         console.log(ctx.answer);
-                         let partialsObject = getCommonElements(ctx);
-                         partialsObject["content"] = './temp/userProfile/msgBox/singleMsg.hbs';
-                         partialsObject["sendMsg"] = './temp/userProfile/msgBox/singleMsg/form.hbs';
-                         ctx.loadPartials(partialsObject).then(function () {
-                             this.partial('./temp/common/main.hbs');
-                         })
-                     })
-            })
-        }
-
-
-
-        function displayMsg(ctx) {
-            if (auth.isAuthed()) {
-                ctx.loggedUsername = sessionStorage.getItem('username');
-            }
-            let newObj = [];
-            msg.getSendMsg().then(function (data) {
-                if (data.length !== 0) {
-                    for (let el of data) {
-                        if (el.title) {
-                            el['time'] = calcTime(el._kmd.ect);
-                            newObj.push(el);
-                        }
-                    }
-                }
-            });
-            msg.getMsg().then(function (data) {
-                if (data.length !== 0) {
-                    for (let el of data) {
-                        if(el.title) {
-                            el['time'] = calcTime(el._kmd.ect);
-                            newObj.push(el);
-                        }
-                    }
-                }
-
-                ctx.data = newObj;
-                let partialsObject = getCommonElements(ctx);
-                partialsObject["content"] = './temp/userProfile/msgBox/index.hbs';
-                partialsObject["msgTemp"] = './temp/userProfile/msgBox/msgTemp.hbs';
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            });
-        }
+        this.post('#/message/send/:username', handleNewMessageThread);
 
         function displayHome(ctx) {
             if (auth.isAuthed()) {
@@ -155,7 +41,6 @@ $(() => {
 
             let partialsObject = getCommonElements(ctx);
             partialsObject["homeForm"] = './temp/homePage/homeForm.hbs';
-            partialsObject["adPreview"] = './temp/homePage/adPreview.hbs';
             partialsObject["content"] = './temp/homePage/home.hbs';
 
             ctx.loadPartials(partialsObject).then(function () {
@@ -305,6 +190,130 @@ $(() => {
             })
         }
 
+        function displayMessages(ctx) {
+            if (!auth.isAuthed()) {
+                ctx.redirect('#/home');
+                return;
+            }
+
+            let allMessages = [];
+            msgService.getSentMessages().then(function (data) {
+                for (let message of data) {
+                    if (message.title) {
+                        message['time'] = calcTime(message._kmd.ect);
+                        allMessages.push(message);
+                    }
+                }
+
+                msgService.getReceivedMessages().then(function (data) {
+                    for (let message of data) {
+                        if (message.title) {
+                            message['time'] = calcTime(message._kmd.ect);
+                            allMessages.push(message);
+                        }
+                    }
+
+                    allMessages = allMessages.sort((a, b) => {
+                        if (a._kmd.ect > b._kmd.ect) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
+                    ctx.data = allMessages;
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["content"] = './temp/userProfile/msgBox/index.hbs';
+                    partialsObject["msgTemp"] = './temp/userProfile/msgBox/msgTemp.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    })
+                });
+            });
+        }
+
+        function displayMessage(ctx) {
+            let id = ctx.params.id;
+
+            msgService.getSingleMessage(id).then(function (data) {
+                data[0]['time'] = calcTime(data[0]._kmd.ect);
+
+                if (data[0].sender === sessionStorage.getItem('username')) {
+                    data[0].style = 'right';
+                } else {
+                    data[0].style = 'left';
+                }
+
+                ctx.data = data[0];
+
+                //TODO Avatar promise resolves later
+                msgService.findAnswer(id).then(function (answer) {
+                    for (let message of answer) {
+                        let username = message.sender;
+
+                        auth.getUserInfo(username).then(function (userInfo) {
+                            message['avatar'] = userInfo[0].avatar;
+                        });
+
+                        message['time'] = calcTime(message._kmd.ect);
+
+                        if (message.sender === sessionStorage.getItem('username')) {
+                            message.style = 'right';
+                        } else {
+                            message.style = 'left';
+                        }
+                    }
+
+                    ctx.answer = answer;
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["content"] = './temp/userProfile/msgBox/singleMsg.hbs';
+                    partialsObject["sendMsg"] = './temp/userProfile/msgBox/singleMsg/form.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    })
+                })
+            })
+        }
+
+        function displaySendMsg(ctx) {
+            ctx.recipient = ctx.params.username;
+
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["content"] = './temp/sendMsg/index.hbs';
+            partialsObject["sendMsgForm"] = './temp/sendMsg/form.hbs';
+
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            })
+        }
+
+        function handleNewMessageThread(ctx) {
+            let recipient = ctx.params.username;
+            let sender = sessionStorage.getItem('username');
+            let text = ctx.params.description;
+            let title = ctx.params.title;
+
+            msgService.createNewMessageThread(recipient, sender, title, text).then(function () {
+                notifications.showInfo('Message successfully sent.');
+                ctx.redirect('#/user/messages');
+            }).catch(notifications.handleError)
+        }
+
+        function handleSendMessageInThread(ctx) {
+            let sender = sessionStorage.getItem('username');
+            let answer = ctx.params.id;
+            let text = ctx.params.msgText;
+            let recipient = ctx.params.recipient;
+
+            msgService.sendMsg(answer, sender, recipient, text).then(function () {
+                ctx.redirect(`#/user/message/${answer}`);
+            })
+        }
+
         function checkUserNameAndPassword(username, password) {
             let usernameRegex = /[A-z]{3}/g;
             let passRegex = /[A-z\d]{6}/g;
@@ -337,6 +346,7 @@ $(() => {
             if (diff < 12) return diff + ' month' + pluralize(diff);
             diff = Math.floor(diff / 12);
             return diff + ' year' + pluralize(diff);
+
             function pluralize(value) {
                 if (value !== 1) return 's';
                 else return '';
