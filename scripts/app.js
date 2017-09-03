@@ -41,24 +41,40 @@ $(() => {
 
         }
 
+        // problem sys zaka4aneto na avataraaaa
         function displaySingleMsg(ctx) {
             let idMsg = ctx.params.id;
             msg.getSingleMsg(idMsg).then(function (data) {
                 data[0]['time'] = calcTime(data[0]._kmd.ect);
+                if(data[0].sender === sessionStorage.getItem('username')) {
+                    data[0].style = 'right';
+                } else {
+                    data[0].style = 'left';
+                }
                 ctx.data = data[0];
                      msg.foundAnswer(idMsg).then(function (answer) {
                          if (answer.length !== 0) {
                              for (let el of answer) {
+                                 let username = el.sender;
+                                 let d;
+                                 // Problem s vidimostta el['avatar'] e zaka4eno uj no ne se vijda. Predpolagam
+                                 // 4e e nesto ot vidimostta v promisa.
+                                 auth.getUserInfo(username).then(function (userInfo) {
+                                   el['avatar']= userInfo[0].avatar;
+                                 });
+                                 console.log(el['avatar']);
                                  el['time'] = calcTime(el._kmd.ect);
                                 if(el.sender === sessionStorage.getItem('username')) {
                                     el.style = 'right';
                                 } else {
                                     el.style = 'left';
                                 }
+
                              }
-                             ctx.answer = data;
                          }
+
                          ctx.answer = answer;
+                         console.log(ctx.answer);
                          let partialsObject = getCommonElements(ctx);
                          partialsObject["content"] = './temp/userProfile/msgBox/singleMsg.hbs';
                          partialsObject["sendMsg"] = './temp/userProfile/msgBox/singleMsg/form.hbs';
