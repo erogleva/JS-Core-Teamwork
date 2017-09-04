@@ -57,9 +57,14 @@
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
             </span>
-        </div>
-    {{else if userRole}}
+            {{#if userRole}}
+                <a href="#/admin/brands" stype="button" class="btn btn-sm btn-success"><i
+                        class="glyphicon glyphicon-pencil"></i> Add/Delete Brand</a>
 
+            {{/if}}
+        </div>
+
+    {{else if userRole}}
         <div class="panel-footer">
              <span class="pull-right">
                 <a href="#/user/edit/{{data.username}}" type="button" class="btn btn-sm btn-warning">
@@ -69,6 +74,7 @@
             <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-envelope"></i> Send Message
             </a>
+
             {{#if data.isBlocked}}
                 <a href="#/user/unban/{{data.username}}" class="btn btn-sm btn-warning">
                     <i class="glyphicon glyphicon-remove"></i> UNBAN
@@ -86,4 +92,6 @@
             </a>
         </div>
     {{/if}}
+
+
 </div>

@@ -42,6 +42,79 @@ $(() => {
 
         this.get('#/user/unban/:username', unBanUser);
 
+        this.get('#/admin/brands', displayBrands);
+
+        this.get('#/admin/brands/new', displayNewBrand);
+
+        this.post('#/admin/brands/new', handleNewBrand);
+
+        this.get('#/admin/brands/edit/:name', displayEditBrand);
+
+        this.post('#/admin/brands/edit/:brand', handleEditBrand);
+
+        this.get('#/admin/brands/delete/:name', deleteBrand);
+
+        function deleteBrand(ctx) {
+            let brandName = {"name": ctx.params.name};
+            brandService.deleteBrand(ctx.params.name).then(function (brandInfo) {
+                    notifications.showInfo('Successfully deleted brand');
+                    ctx.redirect('#/admin/brands');
+            }).catch(notifications.handleError);
+        }
+
+        function handleEditBrand(ctx) {
+            let brandName = {"name": ctx.params.name};
+            brandService.getBrand(ctx.params.brand).then(function (brandInfo) {
+                brandService.editBrand(brandInfo[0]._id, brandName).then(function (data) {
+                    notifications.showInfo('Successfully added brand');
+                    ctx.redirect('#/admin/brands');
+                })
+            }).catch(notifications.handleError);
+        }
+
+        function displayEditBrand(ctx) {
+            ctx.name = ctx.params.name;
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["content"] = './temp/admin/brands/edit.hbs';
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            });
+        }
+
+        function handleNewBrand(ctx) {
+            let brandName = {"name": ctx.params.name};
+            brandService.createBrand(brandName).then(function () {
+                notifications.showInfo('Successfully added brand');
+                ctx.redirect('#/admin/brands');
+            }).catch(notifications.handleError);
+        }
+
+        function displayNewBrand(ctx) {
+            if (auth.isAuthed()) {
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["content"] = './temp/admin/brands/new.hbs';
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                });
+            }
+        }
+
+        function displayBrands(ctx) {
+            brandService.getAllBrands().then(function (data) {
+                ctx.data = data;
+                ctx.length = data.length
+                if (auth.isAuthed()) {
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["content"] = './temp/admin/brands/index.hbs';
+                    partialsObject["brand"] = './temp/admin/brands/brand.hbs';
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    });
+                }
+            });
+
+        }
+
         function unBanUser(ctx) {
             let username = ctx.params.username;
             auth.getUserInfo(username).then(function (userInfo) {
@@ -141,7 +214,7 @@ $(() => {
 
             auth.login(username, password).then(function (userInfo) {
                 if (userInfo.isBlocked === 'true') {
-                    auth.showInfo('You are blocked');
+                    notifications.showInfo('You are blocked');
                     ctx.redirect('#/home');
                     return;
                 }
@@ -235,7 +308,11 @@ $(() => {
                     ctx.redirect('#/home');
                     return;
                 }
+                if (sessionStorage.getItem('userRole')) {
+                    ctx.userRole = true;
+                }
                 ctx.data = data[0];
+
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["editForm"] = './temp/profile/edit/form.hbs';
                 partialsObject["content"] = './temp/profile/edit/index.hbs';
@@ -252,9 +329,14 @@ $(() => {
             let lName = ctx.params.lastName;
             let phone = ctx.params.phone;
 
-
             auth.getUserInfo(ctx.params.username).then(function (data) {
-                auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points, data[0].userRole).then(function (userInfo) {
+                let points = data[0].points;
+
+                if (ctx.params.points) {
+                    points = ctx.params.points;
+                }
+                console.log(points);
+                auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, points, data[0].userRole).then(function (userInfo) {
                     notifications.showInfo('Successfully edited.');
                     if (sessionStorage.getItem('userRole') !== 'admin') {
                         auth.saveSession(userInfo);
