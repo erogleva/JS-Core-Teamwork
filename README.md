@@ -1,6 +1,6 @@
 # 1.	Project Scope
 Your project should implement at least the following functionality:
-•	User registration, login and logout
+<font color="green">•	User registration, login and logout</font>
 
 •	View some content (e.g. blog articles, listings, photos, issues, publications)
 
