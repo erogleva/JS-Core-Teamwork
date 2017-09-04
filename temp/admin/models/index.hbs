@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+        {{#each data}}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-list"></span>Models {{name}}
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {{>model}}
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-5">
+                        </div>
+                        <a href="#admin/models/add/{{name}}" stype="button" class="btn btn-sm btn-success"><i
+                                class="glyphicon glyphicon-plus"></i> Add New Models</a>
+
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+        </div>
+    </div>
+</div>

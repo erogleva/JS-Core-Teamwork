@@ -1,0 +1,13 @@
+{{#each models}}
+    <li class="list-group-item">
+        <div class="checkbox">
+            <label for="checkbox">
+              {{this}}
+            </label>
+        </div>
+        <div class="pull-right action-buttons">
+            <a href="#/admin/model/edit/{{../name}}/{{this}}"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="#/admin/model/delete/{{../name}}/{{this}}" class="trash"><span class="glyphicon glyphicon-trash"></span></a>
+        </div>
+    </li>
+{{/each}}

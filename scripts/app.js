@@ -54,11 +54,75 @@ $(() => {
 
         this.get('#/admin/brands/delete/:name', deleteBrand);
 
+        this.get('#/admin/models', displayModels);
+
+        this.get('#/admin/model/delete/:brand/:name', deleteModel);
+
+        this.get('admin/models/add/:name', displayAddModel);
+
+        this.post('admin/models/add/:brand', handleAddModel);
+
+        function handleAddModel(ctx) {
+            let modelName = ctx.params.name;
+            let brand = ctx.params.brand;
+            let rString = Math.random().toString(36).slice(2);
+            brandService.getBrand(brand).then(function (brandInfo) {
+                if (!brandInfo[0].models) {
+                    brandInfo[0]['models'] = {rString: modelName};
+                } else {
+                    brandInfo[0].models[rString] = modelName;
+                }
+                let data = {"name": brandInfo[0].name, "models": brandInfo[0].models};
+                brandService.editBrand(brandInfo[0]._id, data).then(function (info) {
+                    notifications.showInfo('Dobaven uspeshno');
+                    ctx.redirect(`#/admin/models`)
+                });
+            }).catch(notifications.handleError);
+        }
+
+        function displayAddModel(ctx) {
+            ctx.name = ctx.params.name;
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["content"] = './temp/admin/models/add.hbs';
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            });
+        }
+
+        function deleteModel(ctx) {
+            let modelName = ctx.params.name;
+            let brandName = ctx.params.brand;
+            brandService.getBrand(brandName).then(function (brandInfo) {
+                for (let model in brandInfo[0].models) {
+                    if (brandInfo[0].models[model] === modelName) {
+                        delete brandInfo[0].models[model];
+                    }
+                }
+                let data = {"name": brandInfo[0].name, "models": brandInfo[0].models};
+                brandService.editBrand(brandInfo[0]._id, data).then(function (info) {
+                    ctx.redirect(`#/admin/models`)
+                });
+
+            })
+        }
+
+        function displayModels(ctx) {
+            brandService.getAllBrands().then(function (data) {
+                ctx.data = data;
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["model"] = './temp/admin/models/model.hbs';
+                partialsObject["content"] = './temp/admin/models/index.hbs';
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                });
+            }).catch(notifications.handleError)
+        }
+
         function deleteBrand(ctx) {
             let brandName = {"name": ctx.params.name};
             brandService.deleteBrand(ctx.params.name).then(function (brandInfo) {
-                    notifications.showInfo('Successfully deleted brand');
-                    ctx.redirect('#/admin/brands');
+                notifications.showInfo('Successfully deleted brand');
+                ctx.redirect('#/admin/brands');
             }).catch(notifications.handleError);
         }
 
@@ -335,7 +399,7 @@ $(() => {
                 if (ctx.params.points) {
                     points = ctx.params.points;
                 }
-                console.log(points);
+               git
                 auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, points, data[0].userRole).then(function (userInfo) {
                     notifications.showInfo('Successfully edited.');
                     if (sessionStorage.getItem('userRole') !== 'admin') {

@@ -10,6 +10,7 @@ let brandService = (()=>{
 
     function editBrand(id, data) {
         let endpoint = `brand/${id}` ;
+        console.log(endpoint);
         return requester.update('appdata', endpoint, data);
     }
 
