@@ -8,8 +8,14 @@ let adService = (() => {
         return requester.get('appdata', 'ads');
     }
 
+    function getUserAds(userId) {
+        let endpoint = `ads?query={"_acl.creator":"${userId}"}`;
+        return requester.get('appdata', endpoint);
+    }
+
     return {
         createAd,
-        getAds
+        getAds,
+        getUserAds,
     }
 })();

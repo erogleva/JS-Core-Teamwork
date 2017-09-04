@@ -36,6 +36,30 @@ $(() => {
 
         this.post('#/message/send/:username', handleNewMessageThread);
 
+        this.get('#/user/ads/:username', displayUserAds);
+
+        function displayUserAds(ctx) {
+            auth.getUserInfo(ctx.params.username).then(function (data) {
+                adService.getUserAds(data[0]._id).then(function (ads) {
+                    for (let ad of ads) {
+                        let images = JSON.parse(ad.images);
+                        if (images[0] === ""){
+                            ad.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                        } else {
+                            ad.image = images[0];
+                        }
+                    }
+                    ctx.ads = ads;
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["ad"] = './temp/profile/ads/ad.hbs';
+                    partialsObject["content"] = './temp/profile/ads/index.hbs';
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    });
+                })
+            })
+        }
         function displayHome(ctx) {
             if (!auth.isAuthed()) {
                 let partialsObject = getCommonElements(ctx);
@@ -192,8 +216,9 @@ $(() => {
             let lName = ctx.params.lastName;
             let phone = ctx.params.phone;
 
+
             auth.getUserInfo(ctx.params.username).then(function (data) {
-                auth.editUser(data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points).then(function (userInfo) {
+                auth.editUser(data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points, data[0].userRole).then(function (userInfo) {
                     notifications.showInfo('Successfully edited.');
                     auth.saveSession(userInfo);
                     ctx.redirect(`#/user/details/${data[0].username}`);

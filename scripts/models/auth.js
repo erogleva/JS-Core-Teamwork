@@ -29,9 +29,9 @@ let auth = (() => {
         return requester.get('user', `?query={"username":"${username}"}`);
     }
 
-    function editUser(username, avatar, email, phone, fName, lName, points) {
+    function editUser(username, avatar, email, phone, fName, lName, points, userRole) {
         let id = sessionStorage.getItem('id');
-        return requester.update('user', id, {username, avatar, email, phone, fName, lName, points})
+        return requester.update('user', id, {username, avatar, email, phone, fName, lName, points, userRole})
     }
 
     return {
