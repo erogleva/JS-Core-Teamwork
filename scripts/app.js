@@ -38,12 +38,37 @@ $(() => {
 
         this.get('#/user/ads/:username', displayUserAds);
 
+        this.get('#/user/ban/:username', banUser);
+
+        this.get('#/user/unban/:username', unBanUser);
+
+        function unBanUser(ctx) {
+            let username = ctx.params.username;
+            auth.getUserInfo(username).then(function (userInfo) {
+                userInfo[0].isBlocked = '';
+                auth.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
+                    notifications.showInfo(username + ' is active again');
+                    ctx.redirect(`#/user/details/${userInfo[0].username}`);
+                })
+            }).catch(auth.handleError)
+        }
+
+        function banUser(ctx) {
+            let username = ctx.params.username;
+            auth.getUserInfo(username).then(function (userInfo) {
+                userInfo[0].isBlocked = 'true';
+                auth.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
+                    ctx.redirect(`#/user/details/${userInfo[0].username}`);
+                })
+            }).catch(auth.handleError)
+        }
+
         function displayUserAds(ctx) {
             auth.getUserInfo(ctx.params.username).then(function (data) {
                 adService.getUserAds(data[0]._id).then(function (ads) {
                     for (let ad of ads) {
                         let images = JSON.parse(ad.images);
-                        if (images[0] === ""){
+                        if (images[0] === "") {
                             ad.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
                         } else {
                             ad.image = images[0];
@@ -60,6 +85,7 @@ $(() => {
                 })
             })
         }
+
         function displayHome(ctx) {
             if (!auth.isAuthed()) {
                 let partialsObject = getCommonElements(ctx);
@@ -114,7 +140,18 @@ $(() => {
             let loginForm = $('#loginForm');
 
             auth.login(username, password).then(function (userInfo) {
+                if (userInfo.isBlocked === 'true') {
+                    auth.showInfo('You are blocked');
+                    ctx.redirect('#/home');
+                    return;
+                }
                 auth.saveSession(userInfo);
+                auth.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
+                    if (data[0].userRole) {
+                        sessionStorage.setItem('userRole', data[0].userRole)
+                    }
+                });
+
                 notifications.showInfo('Login successful.');
                 ctx.redirect("#/home");
             }).catch(notifications.handleError);
@@ -174,6 +211,7 @@ $(() => {
                     ctx.isOwner = true;
                 }
                 ctx.data = data[0];
+                ctx.userRole = sessionStorage.getItem('userRole');
 
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["content"] = './temp/profile/index.hbs';
@@ -193,13 +231,11 @@ $(() => {
             ctx.loggedUsername = sessionStorage.getItem('username');
 
             auth.getUserInfo(username).then(function (data) {
-                if (data[0]._id !== sessionStorage.getItem('id')) {
+                if (data[0]._id !== sessionStorage.getItem('id') && sessionStorage.getItem('userRole') !== 'admin') {
                     ctx.redirect('#/home');
                     return;
                 }
-
                 ctx.data = data[0];
-
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["editForm"] = './temp/profile/edit/form.hbs';
                 partialsObject["content"] = './temp/profile/edit/index.hbs';
@@ -218,9 +254,11 @@ $(() => {
 
 
             auth.getUserInfo(ctx.params.username).then(function (data) {
-                auth.editUser(data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points, data[0].userRole).then(function (userInfo) {
+                auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, data[0].points, data[0].userRole).then(function (userInfo) {
                     notifications.showInfo('Successfully edited.');
-                    auth.saveSession(userInfo);
+                    if (sessionStorage.getItem('userRole') !== 'admin') {
+                        auth.saveSession(userInfo);
+                    }
                     ctx.redirect(`#/user/details/${data[0].username}`);
                 }).catch(notifications.handleError)
             }).catch(notifications.handleError);

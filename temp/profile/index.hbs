@@ -53,12 +53,33 @@
             <a href="#/user/messages" stype="button" class="btn btn-sm btn-primary"><i
                     class="glyphicon glyphicon-envelope"></i> Messages</a>
             <span class="pull-right">
-                <a href="#/user/edit/{{loggedUsername}}" type="button" class="btn btn-sm btn-warning">
+                <a href="#/user/edit/{{data.username}}" type="button" class="btn btn-sm btn-warning">
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
             </span>
         </div>
-    {{else}}
+    {{else if userRole}}
+
+        <div class="panel-footer">
+             <span class="pull-right">
+                <a href="#/user/edit/{{data.username}}" type="button" class="btn btn-sm btn-warning">
+                    <i class="glyphicon glyphicon-edit"></i> Edit profile
+                </a>
+            </span>
+            <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
+                <i class="glyphicon glyphicon-envelope"></i> Send Message
+            </a>
+            {{#if data.isBlocked}}
+                <a href="#/user/unban/{{data.username}}" class="btn btn-sm btn-warning">
+                    <i class="glyphicon glyphicon-remove"></i> UNBAN
+                </a>
+                {{else}}
+            <a href="#/user/ban/{{data.username}}" class="btn btn-sm btn-danger">
+                <i class="glyphicon glyphicon-remove"></i> BAN USER
+            </a>
+            {{/if}}
+        </div>
+        {{else}}
         <div class="panel-footer">
             <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-envelope"></i> Send Message
