@@ -11,12 +11,12 @@ Your project should implement at least the following functionality:
 ```diff +
 •	Create new content (e.g. post new blog article, post new listing, upload new photo, create new issue)
 ```
-```diff -
+
 •	Edit existing content(e.g. editing blog post content, photo captions, issue status)
-```
-```diff -
+
+
 •	Delete existing content(e.g. deleting posts, issues, photoes, publications)
-```
+
 
 ```diff +
 •	An admin role, able to modify other users’ profiles or data
@@ -24,20 +24,16 @@ Your project should implement at least the following functionality:
 
 #2 Personal Ads for Cars and Parts
 Create a Web-based application for publishing personal ads for cars automobile parts. The web application is supposed to include two parts:
-```diff -
+-
 •	Categorized catalog of ads with ability to view detailed information
-```
 
-```diff -
 •	Administration interface for editing and deletion of ads
 Provide the following functionality to all visitors (without authentication):
-```
-```diff -
+
 •	Browse categories of ads
-```
-```diff -
+
 •	Advanced search (by category, price, location, etc.)
-```
+
 
 •	View details about an event (information, location, date, price and availability of tickets)
 In addition to the previous functionality, registered users can:
@@ -48,23 +44,23 @@ In addition to the previous functionality, registered users can:
 ```diff +
 •	View contact information of other users
 ```
-```diff -
+
 •	Request promotion of their ad
-```
-```diff -
+
+
 •	Leave comments on ads
-```
+
 Authenticated administrators should be able to:
-```diff -
+
 •	Moderate ads and comments
-```
+
 
 ```diff +
 •	Manage user profiles (ban users who post inappropriate messages)
 ```
-```diff -
+
 •	Promote ads (so they show higher up in the front page)
-```
+
 
 #3. 	Deliverables
 Your main deliverable is the project repository – commit to it the following:
