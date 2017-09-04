@@ -399,7 +399,7 @@ $(() => {
                 if (ctx.params.points) {
                     points = ctx.params.points;
                 }
-               git
+
                 auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, points, data[0].userRole).then(function (userInfo) {
                     notifications.showInfo('Successfully edited.');
                     if (sessionStorage.getItem('userRole') !== 'admin') {
