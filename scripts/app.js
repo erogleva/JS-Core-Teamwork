@@ -1,5 +1,25 @@
 $(() => {
+    let category = start();
+
+    async function stupedUser() {
+        await auth.loginAsStupedUser(1, 2).then(function (data) {
+            sessionStorage.setItem('authtoken', data._kmd.authtoken);
+        });
+    }
+
+    async function start() {
+        await stupedUser();
+        await app.run();
+        let b = await brandService.getAllBrands();
+        return b;
+    }
+
+
     const app = Sammy('#main', function () {
+        Handlebars.registerHelper("len", function(json) {
+            return Object.keys(json).length;
+        });
+
         this.use('Handlebars', 'hbs');
 
         this.get('#/home', displayHome);
@@ -58,9 +78,44 @@ $(() => {
 
         this.get('#/admin/model/delete/:brand/:name', deleteModel);
 
-        this.get('admin/models/add/:name', displayAddModel);
+        this.get('#/admin/models/add/:name', displayAddModel);
 
-        this.post('admin/models/add/:brand', handleAddModel);
+        this.post('#/admin/models/add/:brand', handleAddModel);
+
+        this.get('/admin/model/edit/:brand/:model', displayEditModel);
+
+        this.post('#/admin/models/edit/:brand/:model', handleEditModel);
+
+        function handleEditModel(ctx) {
+            let brand = ctx.params.brand;
+            let oldModel = ctx.params.model;
+            let newModel = ctx.params.name;
+
+            brandService.getBrand(brand).then(function (brandInfo) {
+                for (let modelInfo in brandInfo[0].models) {
+                    if (brandInfo[0].models[modelInfo] === oldModel) {
+                        brandInfo[0].models[modelInfo] = newModel;
+                    }
+                }
+                let data = {"name": brandInfo[0].name, "models": brandInfo[0].models};
+                brandService.editBrand(brandInfo[0]._id, data).then(function (info) {
+                    ctx.redirect(`#/admin/models`)
+                });
+
+            })
+
+        }
+
+        function displayEditModel(ctx) {
+            ctx.model = ctx.params.model;
+            ctx.brand = ctx.params.brand;
+
+            let partialsObject = getCommonElements(ctx);
+            partialsObject["content"] = './temp/admin/models/edit.hbs';
+            ctx.loadPartials(partialsObject).then(function () {
+                this.partial('./temp/common/main.hbs');
+            });
+        }
 
         function handleAddModel(ctx) {
             let modelName = ctx.params.name;
@@ -81,6 +136,7 @@ $(() => {
         }
 
         function displayAddModel(ctx) {
+
             ctx.name = ctx.params.name;
             let partialsObject = getCommonElements(ctx);
             partialsObject["content"] = './temp/admin/models/add.hbs';
@@ -227,11 +283,9 @@ $(() => {
             if (!auth.isAuthed()) {
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["content"] = './temp/home/notLoggedIndex.hbs';
-
                 ctx.loadPartials(partialsObject).then(function () {
                     this.partial('./temp/common/main.hbs');
                 });
-
                 return;
             }
 
@@ -247,28 +301,34 @@ $(() => {
 
                     ad.description = ad.description.substring(0, 15) + "...";
                 }
-
                 ctx.ads = data;
+                brandService.getAllBrands().then(function (info) {
+                    ctx.category = info;
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["ads"] = './temp/ads/ads.hbs';
+                    partialsObject["ad"] = './temp/ads/ad.hbs';
+                    partialsObject["content"] = './temp/home/index.hbs';
 
-                let partialsObject = getCommonElements(ctx);
-                partialsObject["ads"] = './temp/ads/ads.hbs';
-                partialsObject["ad"] = './temp/ads/ad.hbs';
-                partialsObject["content"] = './temp/home/index.hbs';
-
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            });
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    })
+                });
+            })
         }
 
-        function displayLogin(ctx) {
+        //test za kategoriii
+        async function displayLogin(ctx) {
+            ctx.category = await brandService.getAllBrands();
             let partialsObject = getCommonElements(ctx);
             partialsObject["loginForm"] = './temp/login/form.hbs';
             partialsObject["content"] = './temp/login/index.hbs';
-
             ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
-            })
+            });
+        }
+
+        function loadBrands() {
+            return brandService.getAllBrands();
         }
 
         function handleLogin(ctx) {
@@ -330,11 +390,12 @@ $(() => {
             }
         }
 
-        function handleLogout(ctx) {
+        async  function handleLogout(ctx) {
             auth.logout().then(function () {
                 sessionStorage.clear();
-                notifications.showInfo('Logout successful.');
-                ctx.redirect("#/home");
+                    notifications.showInfo('Logout successful.');
+                    ctx.redirect("#/home");
+
             }).catch(notifications.handleError);
         }
 
@@ -585,8 +646,16 @@ $(() => {
                 'header': './temp/common/header.hbs',
                 'footer': './temp/common/footer.hbs',
                 'leftColumn': './temp/common/leftColumn.hbs'
-            };
+            }
+
         }
+
+        function stupedUser(ctx) {
+            auth.loginAsStupedUser(1, 2).then(function (data) {
+                sessionStorage.setItem('authtoken', data._kmd.authtoken);
+            });
+        }
+
 
         function calcTime(dateIsoFormat) {
             let diff = new Date - (new Date(dateIsoFormat));
@@ -608,5 +677,5 @@ $(() => {
             }
         }
     });
-    app.run();
+
 });

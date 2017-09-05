@@ -1,7 +1,7 @@
 let brandService = (()=>{
 
     function getAllBrands() {
-        return requester.get('appdata', 'brand');
+            return requester.get('appdata', 'brand');
     }
 
     function createBrand(data) {

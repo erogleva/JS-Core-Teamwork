@@ -2,6 +2,12 @@ let auth = (() => {
     function isAuthed() {
         return sessionStorage.getItem('authtoken') !== null;
     }
+    
+    function loginAsStupedUser() {
+        let username = 'stupeduser';
+        let password = 'stupeduser';
+        return requester.post('user', 'login', {username, password}, 'basic');
+    }
 
     function saveSession(data) {
         sessionStorage.setItem('username', data.username);
@@ -49,6 +55,7 @@ let auth = (() => {
         isAuthed,
         editUser,
         banUser,
-        unBanUser
+        unBanUser,
+        loginAsStupedUser
     }
 })();

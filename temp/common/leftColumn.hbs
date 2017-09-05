@@ -1,16 +1,12 @@
+
 <div class="panel panel-info">
     <div class="panel-heading">
         <div class="single category">
             <h3 class="side-title">Brands</h3>
             <ul class="list-unstyled">
-                <li><a href="" title="">Volkswagen <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Mercedes <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Audi <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">BMW <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Renault <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Volvo <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Ford <span class="badge pull-right">13</span></a></li>
-                <li><a href="" title="">Subaru <span class="badge pull-right">13</span></a></li>
+                {{#each category}}
+                <li><a href="" title="">{{name}} <span class="badge pull-right">{{#if models}}Модели:{{len models}}{{/if}}</span></a>
+                {{/each}}
             </ul>
         </div>
     </div>
