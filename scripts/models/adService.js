@@ -1,6 +1,5 @@
 let adService = (() => {
-    function createAd(title, description, brand, model, city, mileage, price, imagesUrls, author, promoted, publishedDate) {
-        let images = JSON.stringify(imagesUrls);
+    function createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate) {
         return requester.post('appdata', 'ads', {title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate});
     }
 
@@ -27,7 +26,7 @@ let adService = (() => {
             city: city,
             mileage: mileage,
             price: price,
-            images: JSON.stringify(images),
+            images: images,
             publishedDate: publishedDate,
             author: author,
             promoted: promoted

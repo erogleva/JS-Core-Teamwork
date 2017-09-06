@@ -52,6 +52,17 @@ $(() => {
 
         this.post('#/edit/:id', handleEditAd);
 
+        this.get('#/delete/:id', function(ctx) {
+            let adId = ctx.params.id.substr(1);
+            console.log(adId);
+            adService.removeAd(adId)
+                .then(function (adInfo) {
+                    console.log(adInfo)
+                    notifications.showInfo(`Your ad is deleted.`);
+                    ctx.redirect('#/home')
+                }).catch(auth.handleError);
+        });
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -486,8 +497,7 @@ $(() => {
             let city = $("#city").find(":selected").text();
             let mileage = parseInt(ctx.params.mileage);
             let price = parseFloat(ctx.params.price);
-            let imageUrls = ctx.params.images.split(", ");
-            let images = [];
+            let images = ctx.params.images;
 
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
@@ -496,10 +506,6 @@ $(() => {
             let author = ctx.loggedUsername;
             let promoted = false;
             let publishedDate = new Date();
-
-            for (let imageUrl of imageUrls) {
-                images.push(imageUrl);
-            }
 
             adService.createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate).then(function () {
                 ctx.redirect("#/home");
@@ -524,7 +530,7 @@ $(() => {
                     context.city = adInfo.city;
                     context.mileage = parseInt(adInfo.mileage);
                     context.price = parseFloat(adInfo.price);
-                    context.images = JSON.parse(adInfo.images.split(", "));
+                    context.images = adInfo.images;
 
                     if(context.author === context.loggedUsername){
                         context.isAuthor = true;
@@ -555,7 +561,7 @@ $(() => {
                     ctx.city = adInfo.city;
                     ctx.mileage = parseInt(adInfo.mileage);
                     ctx.price = parseFloat(adInfo.price);
-                    ctx.images = JSON.parse(adInfo.images.split(", "));
+                    ctx.images = adInfo.images;
 
 
                     let partialsObject = getCommonElements(ctx);
@@ -578,9 +584,7 @@ $(() => {
             let mileage = parseInt(ctx.params.mileage);
             let price = parseFloat(ctx.params.price);
             let publishedDate = new Date();
-            let image = ctx.params.images;
-            let images = [];
-            images.push(image);
+            let images = ctx.params.images;
 
             adService.loadAdDetails(adId).then(function (adInfo) {
                     ctx.promoted = adInfo.promoted;
