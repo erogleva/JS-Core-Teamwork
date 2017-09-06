@@ -1,0 +1,26 @@
+<figure class="snip1492-details">
+    <figcaption class="details">
+        <h3>{{title}}</h3><br/>
+        <p>Brand: {{brand}}</p>
+        <p>Model: {{model}}</p>
+        <p>City: {{city}}</p>
+        <p>Mileage: {{mileage}}</p>
+        <div class="price">
+            {{price}} BGN
+        </div><br/>
+        <p>{{description}}</p>
+        <p>Owner: {{author}}</p>
+        <p>Published: {{publishedDate}} ago</p>
+        {{#each images}}
+            <img class="details-image" src="{{this}}">
+        {{/each}}
+    </figcaption>
+    {{#if loggedUsername}}
+        <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
+    {{/if}}
+    {{#if isAuthor}}
+        <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
+        <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
+    {{/if}}
+
+</figure>

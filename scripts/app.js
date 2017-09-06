@@ -46,6 +46,8 @@ $(() => {
 
         this.post('#/create', handleCreateAd);
 
+        this.get('#/ads/details/:id',displayDetailsAd);
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -259,14 +261,14 @@ $(() => {
         function displayUserAds(ctx) {
             auth.getUserInfo(ctx.params.username).then(function (data) {
                 adService.getUserAds(data[0]._id).then(function (ads) {
-                    for (let ad of ads) {
+                    /*for (let ad of ads) {
                         let images = JSON.parse(ad.images);
                         if (images[0] === "") {
                             ad.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
                         } else {
                             ad.image = images[0];
                         }
-                    }
+                    }*/
                     ctx.ads = ads;
 
                     let partialsObject = getCommonElements(ctx);
@@ -290,7 +292,7 @@ $(() => {
             }
 
             adService.getAds().then(function (data) {
-                for (let ad of data) {
+                /*for (let ad of data) {
                     let images = JSON.parse(ad.images);
 
                     if (images[0] === "") {
@@ -300,7 +302,7 @@ $(() => {
                     }
 
                     ad.description = ad.description.substring(0, 15) + "...";
-                }
+                }*/
                 ctx.ads = data;
                 brandService.getAllBrands().then(function (info) {
                     ctx.category = info;
@@ -497,13 +499,55 @@ $(() => {
             let imageUrls = ctx.params.images.split(", ");
             let images = [];
 
+            if (auth.isAuthed()) {
+                ctx.loggedUsername = sessionStorage.getItem('username');
+            }
+
+            let author = ctx.loggedUsername;
+            let promoted = false;
+            let publishedDate = new Date();
+
             for (let imageUrl of imageUrls) {
                 images.push(imageUrl);
             }
 
-            adService.createAd(title, description, brand, model, city, mileage, price, images).then(function () {
+            adService.createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate).then(function () {
                 ctx.redirect("#/home");
             })
+        }
+
+        function displayDetailsAd(context) {
+            if (auth.isAuthed()) {
+                context.loggedUsername = sessionStorage.getItem('username');
+            }
+            let adId = context.params.id;
+
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    context.id = adId;
+                    context.title = adInfo.title;
+                    context.description = adInfo.description;
+                    context.publishedDate = calcTime(adInfo.publishedDate);
+                    context.author = adInfo.author;
+                    context.brand = adInfo.brand;
+                    context.model = adInfo.model;
+                    context.city = adInfo.city;
+                    context.mileage = parseInt(adInfo.mileage);
+                    context.price = parseFloat(adInfo.price);
+                    context.images = JSON.parse(adInfo.images.split(", "));
+
+                    if(context.author === context.loggedUsername){
+                        context.isAuthor = true;
+                    }
+
+                    let partialsObject = getCommonElements(context);
+                    partialsObject["content"] = './temp/ads/details/index.hbs';
+
+                    context.loadPartials(partialsObject)
+                        .then(function () {
+                            this.partial('./temp/common/main.hbs');
+                        });
+                }).catch(notifications.handleError);
         }
 
         function displayMessages(ctx) {

@@ -1,7 +1,7 @@
 let adService = (() => {
-    function createAd(title, description, brand, model, city, mileage, price, imagesUrls) {
+    function createAd(title, description, brand, model, city, mileage, price, imagesUrls, author, promoted, publishedDate) {
         let images = JSON.stringify(imagesUrls);
-        return requester.post('appdata', 'ads', {title, description, brand, model, city, mileage, price, images});
+        return requester.post('appdata', 'ads', {title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate});
     }
 
     function getAds() {
@@ -13,9 +13,14 @@ let adService = (() => {
         return requester.get('appdata', endpoint);
     }
 
+    function loadAdDetails(adId) {
+        return requester.get('appdata', 'ads/' + adId);
+    }
+
     return {
         createAd,
         getAds,
         getUserAds,
+        loadAdDetails
     }
 })();
