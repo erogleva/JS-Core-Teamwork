@@ -652,6 +652,45 @@ ul {
     cursor:pointer;
 }
 
+.snip1492-details {
+    font-family: 'Oswald', Arial, sans-serif;
+    position: relative;
+    float: left;
+    width: 100%;
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
+}
+
+.snip1492-details figcaption h3 {
+    text-align: center;
+}
+
+.details {
+    padding: 3%;
+}
+
+.details-image {
+     max-width: 50%;
+     height: auto;
+     float: right;
+     margin-top: -30%;
+ }
+
+.edit-image {
+    max-width: 50%;
+    height: auto;
+}
+
+
+.details-date {
+    display: inline-block;
+    margin-left: 25%;
+    font-style: italic;
+    font-size: 12px;
+}
+
 
 .trash { color:rgb(209, 91, 71); }
 .flag { color:rgb(248, 148, 6); }
