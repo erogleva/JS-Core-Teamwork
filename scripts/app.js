@@ -619,12 +619,10 @@ $(() => {
 
                     let author = ctx.loggedUsername;
 
-<<<<<<< HEAD
             adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
                 .then(function (adInfo) {
                     notifications.showInfo('Ad is updated');
                     ctx.redirect(`#/ads/details/${adId}`);
-=======
                     adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, ctx.promoted)
                         .then(function(adInfo) {
                             notifications.showInfo('Ad is updated');
