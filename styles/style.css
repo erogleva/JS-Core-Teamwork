@@ -6,7 +6,9 @@
     float: left;
     margin: 10px 1%;
     min-width: 230px;
-    max-width: 260px;
+    max-width: 262px;
+    min-height: 360px;
+    max-height: 360px;
     width: 100%;
     background: #ffffff;
     text-align: center;
@@ -24,6 +26,8 @@
 
 .snip1492 img {
     max-width: 100%;
+    min-height: 235px;
+    max-height: 235px;
     vertical-align: top;
     position: relative;
     background-color: #666666;

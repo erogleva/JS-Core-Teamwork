@@ -486,7 +486,7 @@ $(() => {
             let city = $("#city").find(":selected").text();
             let mileage = parseInt(ctx.params.mileage);
             let price = parseFloat(ctx.params.price);
-            let imageUrls = ctx.params.images.split(", ");
+            let imageUrls = ctx.params.images;
             let images = [];
 
             if (auth.isAuthed()) {
@@ -524,19 +524,25 @@ $(() => {
                     context.city = adInfo.city;
                     context.mileage = parseInt(adInfo.mileage);
                     context.price = parseFloat(adInfo.price);
-                    context.images = JSON.parse(adInfo.images.split(", "));
+                    if (!adInfo.images) {
+                        context.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                    } else {
+                        context.image = adInfo.images;
+                    }
 
-                    if(context.author === context.loggedUsername){
+                    if (context.author === context.loggedUsername) {
                         context.isAuthor = true;
                     }
 
-                    let partialsObject = getCommonElements(context);
-                    partialsObject["content"] = './temp/ads/details/index.hbs';
-
-                    context.loadPartials(partialsObject)
-                        .then(function () {
-                            this.partial('./temp/common/main.hbs');
-                        });
+                    brandService.getAllBrands().then(function (data) {
+                        context.category = data;
+                        let partialsObject = getCommonElements(context);
+                        partialsObject["content"] = './temp/ads/details/index.hbs';
+                        context.loadPartials(partialsObject)
+                            .then(function () {
+                                this.partial('./temp/common/main.hbs');
+                            });
+                    })
                 }).catch(notifications.handleError);
         }
 
@@ -555,7 +561,7 @@ $(() => {
                     ctx.city = adInfo.city;
                     ctx.mileage = parseInt(adInfo.mileage);
                     ctx.price = parseFloat(adInfo.price);
-                    ctx.images = JSON.parse(adInfo.images.split(", "));
+                    ctx.images = adInfo.images;
 
 
                     let partialsObject = getCommonElements(ctx);
@@ -579,8 +585,8 @@ $(() => {
             let price = parseFloat(ctx.params.price);
             let publishedDate = new Date();
             let image = ctx.params.images;
-            let images = [];
-            images.push(image);
+            let images = image;
+
 
             adService.loadAdDetails(adId).then(function (adInfo) {
                     ctx.promoted = adInfo.promoted;

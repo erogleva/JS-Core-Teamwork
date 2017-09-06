@@ -11,16 +11,24 @@
         <p>{{description}}</p>
         <p>Owner: {{author}}</p>
         <p>Published: {{publishedDate}} ago</p>
-        {{#each images}}
-            <img class="details-image" src="{{this}}">
-        {{/each}}
+
+            <img class="details-image" src="{{image}}">
+
     </figcaption>
-    {{#if loggedUsername}}
-        <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
-    {{/if}}
+
     {{#if isAuthor}}
+        <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
+        <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
+            <i class="glyphicon glyphicon-vip"></i> Make VIP
+        </a>
+    {{else if loggedUsername}}
+    <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
+    <i class="glyphicon glyphicon-envelope"></i> Send Message to owner
+    </a>
+    <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
+        {{else}}
     {{/if}}
 
 </figure>

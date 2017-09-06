@@ -26,7 +26,7 @@ let auth = (() => {
     }
 
     function logout() {
-        return requester.post('user', '_logout', {authtoken: sessionStorage.getItem('authtoken')});
+        return requester.post('user', '_logout');
     }
 
     function getUserInfo(username) {
