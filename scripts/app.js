@@ -52,6 +52,17 @@ $(() => {
 
         this.post('#/edit/:id', handleEditAd);
 
+        this.get('#/delete/:id', function(ctx) {
+            let adId = ctx.params.id.substr(1);
+            console.log(adId);
+            adService.removeAd(adId)
+                .then(function (adInfo) {
+                    console.log(adInfo)
+                    notifications.showInfo(`Your ad is deleted.`);
+                    ctx.redirect('#/home')
+                }).catch(auth.handleError);
+        });
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -486,20 +497,15 @@ $(() => {
             let city = $("#city").find(":selected").text();
             let mileage = parseInt(ctx.params.mileage);
             let price = parseFloat(ctx.params.price);
-            let imageUrls = ctx.params.images;
-            let images = [];
+            let images = ctx.params.images;
+
 
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
             }
-
             let author = ctx.loggedUsername;
             let promoted = false;
             let publishedDate = new Date();
-
-            for (let imageUrl of imageUrls) {
-                images.push(imageUrl);
-            }
 
             adService.createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate).then(function () {
                 ctx.redirect("#/home");
@@ -529,6 +535,7 @@ $(() => {
                     } else {
                         context.image = adInfo.images;
                     }
+
 
                     if (context.author === context.loggedUsername) {
                         context.isAuthor = true;
@@ -584,10 +591,9 @@ $(() => {
             let mileage = parseInt(ctx.params.mileage);
             let price = parseFloat(ctx.params.price);
             let publishedDate = new Date();
+
             let image = ctx.params.images;
-            let images = image;
-
-
+            let images = ctx.params.images;
             adService.loadAdDetails(adId).then(function (adInfo) {
                     ctx.promoted = adInfo.promoted;
             });
