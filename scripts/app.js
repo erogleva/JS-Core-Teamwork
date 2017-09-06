@@ -607,7 +607,7 @@ $(() => {
             let promoted = ctx.promoted;
             adService.loadAdDetails(adId)
                 .then(function (adInfo) {
-                    if(adInfo.promoted) {
+                    if (adInfo.promoted) {
                         ctx.promoted = true;
                     } else {
                         ctx.promoted = false;
@@ -619,17 +619,17 @@ $(() => {
 
                     let author = ctx.loggedUsername;
 
-            adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
-                .then(function (adInfo) {
-                    notifications.showInfo('Ad is updated');
-                    ctx.redirect(`#/ads/details/${adId}`);
-                    adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, ctx.promoted)
-                        .then(function(adInfo) {
+                    adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
+                        .then(function (adInfo) {
                             notifications.showInfo('Ad is updated');
                             ctx.redirect(`#/ads/details/${adId}`);
-                        });
->>>>>>> 8049315c1bba55b06481e64c11e7ddb2c9bfc012
-                }).catch(auth.handleError);
+                            adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, ctx.promoted)
+                                .then(function (adInfo) {
+                                    notifications.showInfo('Ad is updated');
+                                    ctx.redirect(`#/ads/details/${adId}`);
+                                });
+                        }).catch(auth.handleError);
+                })
         }
 
         function publishAdComment(ctx) {
