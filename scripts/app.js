@@ -16,7 +16,7 @@ $(() => {
 
 
     const app = Sammy('#main', function () {
-        Handlebars.registerHelper("len", function(json) {
+        Handlebars.registerHelper("len", function (json) {
             return Object.keys(json).length;
         });
 
@@ -81,6 +81,7 @@ $(() => {
         this.get('#/admin/models/add/:name', displayAddModel);
 
         this.post('#/admin/models/add/:brand', handleAddModel);
+
 
         this.get('/admin/model/edit/:brand/:model', displayEditModel);
 
@@ -222,7 +223,7 @@ $(() => {
         function displayBrands(ctx) {
             brandService.getAllBrands().then(function (data) {
                 ctx.data = data;
-                ctx.length = data.length
+                ctx.length = data.length;
                 if (auth.isAuthed()) {
                     let partialsObject = getCommonElements(ctx);
                     partialsObject["content"] = './temp/admin/brands/index.hbs';
@@ -280,25 +281,11 @@ $(() => {
         }
 
         function displayHome(ctx) {
-            if (!auth.isAuthed()) {
-                let partialsObject = getCommonElements(ctx);
-                partialsObject["content"] = './temp/home/notLoggedIndex.hbs';
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                });
-                return;
-            }
-
             adService.getAds().then(function (data) {
                 for (let ad of data) {
-                    let images = JSON.parse(ad.images);
-
-                    if (images[0] === "") {
-                        ad.image = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
-                    } else {
-                        ad.image = images[0];
+                    if (!ad.images) {
+                        ad.images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
                     }
-
                     ad.description = ad.description.substring(0, 15) + "...";
                 }
                 ctx.ads = data;
@@ -316,7 +303,6 @@ $(() => {
             })
         }
 
-        //test za kategoriii
         async function displayLogin(ctx) {
             ctx.category = await brandService.getAllBrands();
             let partialsObject = getCommonElements(ctx);
@@ -325,10 +311,6 @@ $(() => {
             ctx.loadPartials(partialsObject).then(function () {
                 this.partial('./temp/common/main.hbs');
             });
-        }
-
-        function loadBrands() {
-            return brandService.getAllBrands();
         }
 
         function handleLogin(ctx) {
@@ -390,11 +372,11 @@ $(() => {
             }
         }
 
-        async  function handleLogout(ctx) {
+        async function handleLogout(ctx) {
             auth.logout().then(function () {
                 sessionStorage.clear();
-                    notifications.showInfo('Logout successful.');
-                    ctx.redirect("#/home");
+                notifications.showInfo('Logout successful.');
+                ctx.redirect("#/home");
 
             }).catch(notifications.handleError);
         }
@@ -476,14 +458,16 @@ $(() => {
                 ctx.redirect("#/home");
                 return;
             }
+            brandService.getAllBrands().then(function (data) {
+                ctx.category = data;
+                let partialsObject = getCommonElements(ctx);
+                partialsObject["createForm"] = './temp/ads/create/form.hbs';
+                partialsObject["content"] = './temp/ads/create/index.hbs';
 
-            let partialsObject = getCommonElements(ctx);
-            partialsObject["createForm"] = './temp/ads/create/form.hbs';
-            partialsObject["content"] = './temp/ads/create/index.hbs';
-
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
+                ctx.loadPartials(partialsObject).then(function () {
+                    this.partial('./temp/common/main.hbs');
+                })
+            });
         }
 
         function handleCreateAd(ctx) {
@@ -553,43 +537,51 @@ $(() => {
         function displayMessageThread(ctx) {
             let id = ctx.params.id;
 
-            msgService.getSingleMessage(id).then(function (data) {
-                data[0]['time'] = calcTime(data[0]._kmd.ect);
-
-                if (data[0].sender === sessionStorage.getItem('username')) {
-                    data[0].style = 'right';
-                } else {
-                    data[0].style = 'left';
-                }
-
-                ctx.data = data[0];
-
-                //TODO Avatar promise resolves later
-                msgService.findAnswer(id).then(function (answer) {
-                    for (let message of answer) {
-                        let username = message.sender;
-
-                        auth.getUserInfo(username).then(function (userInfo) {
-                            message['avatar'] = userInfo[0].avatar;
-                        });
-
-                        message['time'] = calcTime(message._kmd.ect);
-
-                        if (message.sender === sessionStorage.getItem('username')) {
-                            message.style = 'right';
-                        } else {
-                            message.style = 'left';
-                        }
+            brandService.getAllBrands().then(function (brandInfo) {
+                ctx.category = brandInfo;
+                msgService.getSingleMessage(id).then(function (data) {
+                    data[0]['time'] = calcTime(data[0]._kmd.ect);
+                    if (data[0].sender === sessionStorage.getItem('username')) {
+                        data[0].style = 'right';
+                        data[0].avatar = sessionStorage.getItem('avatar')
+                    } else {
+                        data[0].style = 'left';
+                        auth.getUserInfo(data[0].sender).then(function (userInfo) {
+                            data[0].avatar = userInfo.avatar
+                        })
                     }
+                    ctx.data = data[0];
 
-                    ctx.answer = answer;
+                    //TODO Avatar promise resolves later
+                    msgService.findAnswer(id).then(function (answer) {
 
-                    let partialsObject = getCommonElements(ctx);
-                    partialsObject["content"] = './temp/messages/thread/index.hbs';
-                    partialsObject["form"] = './temp/messages/thread/form.hbs';
+                        for (let message of answer) {
+                            if (message.sender === sessionStorage.getItem('username')) {
+                                message.avatar = sessionStorage.getItem('avatar');
+                                message.style = 'right';
+                            } else {
+                                console.log(2225);
+                                let username = message.sender;
+                                auth.getUserInfo(username).then(function (userInfo) {
+                                    message['avatar'] = userInfo[0].avatar;
+                                    message.style = 'left';
+                                });
+                            }
+                            message['time'] = calcTime(message._kmd.ect);
+                            ctx.answer = answer;
+                            console.log( ctx.answer);
+                        }
 
-                    ctx.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
+
+
+                        console.log(111);
+                        let partialsObject = getCommonElements(ctx);
+                        partialsObject["content"] = './temp/messages/thread/index.hbs';
+                        partialsObject["form"] = './temp/messages/thread/form.hbs';
+
+                        ctx.loadPartials(partialsObject).then(function () {
+                            this.partial('./temp/common/main.hbs');
+                        })
                     })
                 })
             })
@@ -679,3 +671,4 @@ $(() => {
     });
 
 });
+
