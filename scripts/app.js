@@ -63,6 +63,8 @@ $(() => {
                 }).catch(auth.handleError);
         });
 
+        this.get('#/comment/:id', publishAdComment);
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -608,6 +610,23 @@ $(() => {
                     notifications.showInfo('Ad is updated');
                     ctx.redirect(`#/ads/details/${adId}`);
                 }).catch(auth.handleError);
+        }
+
+        function publishAdComment(ctx) {
+            let adId = ctx.params.id.substr(1);
+
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    ctx.id = adId;
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["commentForm"] = './temp/ads/comments/form.hbs';
+                    partialsObject["content"] = './temp/ads/comments/index.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    });
+                });
         }
 
         function displayMessages(ctx) {
