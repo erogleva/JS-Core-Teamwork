@@ -17,10 +17,34 @@ let adService = (() => {
         return requester.get('appdata', 'ads/' + adId);
     }
 
+    function edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted) {
+
+        let adData = {
+            title: title,
+            description: description,
+            brand: brand,
+            model: model,
+            city: city,
+            mileage: mileage,
+            price: price,
+            images: JSON.stringify(images),
+            publishedDate: publishedDate,
+            author: author,
+            promoted: promoted
+        };
+        return requester.update('appdata', 'ads/' + adId, adData);
+    }
+
+    function removeAd(adId) {
+        return requester.del('appdata', 'ads/' + adId);
+    }
+
     return {
         createAd,
         getAds,
         getUserAds,
-        loadAdDetails
+        loadAdDetails,
+        edit,
+        removeAd
     }
 })();

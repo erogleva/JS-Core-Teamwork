@@ -48,6 +48,10 @@ $(() => {
 
         this.get('#/ads/details/:id',displayDetailsAd);
 
+        this.get('#/edit/:id', displayEditAd);
+
+        this.post('#/edit/:id', handleEditAd);
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -548,6 +552,65 @@ $(() => {
                             this.partial('./temp/common/main.hbs');
                         });
                 }).catch(notifications.handleError);
+        }
+
+        function displayEditAd(ctx) {
+            let adId = ctx.params.id.substr(1);
+
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    ctx.id = adId;
+                    ctx.title = adInfo.title;
+                    ctx.description = adInfo.description;
+                    ctx.publishedDate = calcTime(adInfo.publishedDate);
+                    ctx.author = adInfo.author;
+                    ctx.brand = adInfo.brand;
+                    ctx.model = adInfo.model;
+                    ctx.city = adInfo.city;
+                    ctx.mileage = parseInt(adInfo.mileage);
+                    ctx.price = parseFloat(adInfo.price);
+                    ctx.images = JSON.parse(adInfo.images.split(", "));
+
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["editForm"] = './temp/ads/edit/form.hbs';
+                    partialsObject["content"] = './temp/ads/edit/index.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    });
+                });
+        }
+
+        function handleEditAd(ctx) {
+            let adId = ctx.params.id.substr(1);
+            let title = ctx.params.title;
+            let description = ctx.params.description;
+            let brand = $("#brand").find(":selected").text();
+            let model = $("#model").find(":selected").text();
+            let city = $("#city").find(":selected").text();
+            let mileage = parseInt(ctx.params.mileage);
+            let price = parseFloat(ctx.params.price);
+            let publishedDate = new Date();
+            let image = ctx.params.images;
+            let images = [];
+            images.push(image);
+
+            adService.loadAdDetails(adId).then(function (adInfo) {
+                    ctx.promoted = adInfo.promoted;
+            });
+            let promoted = ctx.promoted;
+
+            if (auth.isAuthed()) {
+                ctx.loggedUsername = sessionStorage.getItem('username');
+            }
+            let author = ctx.loggedUsername;
+
+            adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
+                .then(function(adInfo) {
+                    notifications.showInfo('Ad is updated');
+                    ctx.redirect(`#/ads/details/${adId}`);
+                }).catch(auth.handleError);
         }
 
         function displayMessages(ctx) {

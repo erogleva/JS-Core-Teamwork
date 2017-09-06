@@ -1,6 +1,6 @@
 <form class="form-horizontal" method="POST" action="#/edit/:{{id}}">
     <fieldset>
-        <legend>Edit Ad</legend>
+        <legend>Edit your ad</legend>
         <div class="form-group">
             <label class="col-sm-4 control-label">Title</label>
             <div class="col-sm-4">
@@ -67,19 +67,19 @@
         <div class="form-group">
             <label class="col-sm-4 control-label">Images</label>
             <div class="col-sm-4">
+                {{#each images}}
+                    <img class="edit-image" src="{{this}}">
+                {{/each}}
                 <input type="text" class="form-control" id="images" value="{{images}}"
                        name="images">
             </div>
         </div>
-        <!--<div class="form-group">-->
-        <!--<label class="control-label col-sm-4">Picture</label>-->
-        <!--<div class="col-sm-4">-->
-        <!--<input class="form-control" type="file" name="photo" required>-->
-        <!--</div>-->
-        <!--</div>-->
+        <div class="form-group">
+            <div class="details-date"><label>Last updated:</label> {{publishedDate}} ago</div>
+        </div>
         <div class="form-group">
             <div class="col-sm-4 col-sm-offset-4">
-                <a class="btn btn-default" href="#/home">Cancel</a>
+                <a class="btn btn-default" href="#/ads/details/{{id}}">Cancel</a>
                 <button type="submit" class="btn btn-success">Update</button>
             </div>
         </div>
