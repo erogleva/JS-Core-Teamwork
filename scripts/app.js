@@ -62,6 +62,8 @@ $(() => {
                 }).catch(auth.handleError);
         });
 
+        this.get('#/comment/:id', publishAdComment);
+
         this.get('#/user/messages', displayMessages);
 
         this.get('#/user/message/:id', displayMessageThread);
@@ -533,9 +535,9 @@ $(() => {
                     context.mileage = parseInt(adInfo.mileage);
                     context.price = parseFloat(adInfo.price);
                     if (!adInfo.images) {
-                        context.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                        context.images = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
                     } else {
-                        context.image = adInfo.images;
+                        context.images = adInfo.images;
                     }
 
 
@@ -572,6 +574,8 @@ $(() => {
                     ctx.mileage = parseInt(adInfo.mileage);
                     ctx.price = parseFloat(adInfo.price);
                     ctx.images = adInfo.images;
+                    ctx.promoted = adInfo.promoted;
+                    console.log(ctx.promoted);
 
 
                     let partialsObject = getCommonElements(ctx);
@@ -595,23 +599,56 @@ $(() => {
             let price = parseFloat(ctx.params.price);
             let publishedDate = new Date();
 
-            let image = ctx.params.images;
             let images = ctx.params.images;
+
             adService.loadAdDetails(adId).then(function (adInfo) {
                 ctx.promoted = adInfo.promoted;
             });
             let promoted = ctx.promoted;
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    if(adInfo.promoted) {
+                        ctx.promoted = true;
+                    } else {
+                        ctx.promoted = false;
+                    }
 
-            if (auth.isAuthed()) {
-                ctx.loggedUsername = sessionStorage.getItem('username');
-            }
-            let author = ctx.loggedUsername;
+                    if (auth.isAuthed()) {
+                        ctx.loggedUsername = sessionStorage.getItem('username');
+                    }
 
+                    let author = ctx.loggedUsername;
+
+<<<<<<< HEAD
             adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
                 .then(function (adInfo) {
                     notifications.showInfo('Ad is updated');
                     ctx.redirect(`#/ads/details/${adId}`);
+=======
+                    adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, ctx.promoted)
+                        .then(function(adInfo) {
+                            notifications.showInfo('Ad is updated');
+                            ctx.redirect(`#/ads/details/${adId}`);
+                        });
+>>>>>>> 8049315c1bba55b06481e64c11e7ddb2c9bfc012
                 }).catch(auth.handleError);
+        }
+
+        function publishAdComment(ctx) {
+            let adId = ctx.params.id.substr(1);
+
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    ctx.id = adId;
+
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["commentForm"] = './temp/ads/comments/form.hbs';
+                    partialsObject["content"] = './temp/ads/comments/index.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    });
+                });
         }
 
         function displayMessages(ctx) {
