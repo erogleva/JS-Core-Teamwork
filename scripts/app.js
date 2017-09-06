@@ -46,18 +46,17 @@ $(() => {
 
         this.post('#/create', handleCreateAd);
 
-        this.get('#/ads/details/:id',displayDetailsAd);
+        this.get('#/ads/details/:id', displayDetailsAd);
 
         this.get('#/edit/:id', displayEditAd);
 
         this.post('#/edit/:id', handleEditAd);
 
-        this.get('#/delete/:id', function(ctx) {
+        this.get('#/delete/:id', function (ctx) {
             let adId = ctx.params.id.substr(1);
-            console.log(adId);
             adService.removeAd(adId)
                 .then(function (adInfo) {
-                    console.log(adInfo)
+                    console.log(adInfo);
                     notifications.showInfo(`Your ad is deleted.`);
                     ctx.redirect('#/home')
                 }).catch(auth.handleError);
@@ -278,13 +277,13 @@ $(() => {
             auth.getUserInfo(ctx.params.username).then(function (data) {
                 adService.getUserAds(data[0]._id).then(function (ads) {
                     /*for (let ad of ads) {
-                        let images = JSON.parse(ad.images);
-                        if (images[0] === "") {
-                            ad.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
-                        } else {
-                            ad.image = images[0];
-                        }
-                    }*/
+                     let images = JSON.parse(ad.images);
+                     if (images[0] === "") {
+                     ad.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                     } else {
+                     ad.image = images[0];
+                     }
+                     }*/
                     ctx.ads = ads;
 
                     let partialsObject = getCommonElements(ctx);
@@ -299,6 +298,7 @@ $(() => {
 
         function displayHome(ctx) {
             adService.getAds().then(function (data) {
+                console.log(11111);
                 for (let ad of data) {
                     if (!ad.images) {
                         ad.images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
@@ -308,8 +308,9 @@ $(() => {
                 }
                 ctx.ads = data;
 
-                });
+
                 brandService.getAllBrands().then(function (info) {
+                    console.log(info);
                     ctx.category = info;
                     let partialsObject = getCommonElements(ctx);
                     partialsObject["ads"] = './temp/ads/ads.hbs';
@@ -320,6 +321,7 @@ $(() => {
                         this.partial('./temp/common/main.hbs');
                     })
                 });
+            })
         }
 
         async function displayLogin(ctx) {
@@ -543,6 +545,7 @@ $(() => {
 
                     brandService.getAllBrands().then(function (data) {
                         context.category = data;
+
                         let partialsObject = getCommonElements(context);
                         partialsObject["content"] = './temp/ads/details/index.hbs';
                         context.loadPartials(partialsObject)
@@ -595,7 +598,7 @@ $(() => {
             let image = ctx.params.images;
             let images = ctx.params.images;
             adService.loadAdDetails(adId).then(function (adInfo) {
-                    ctx.promoted = adInfo.promoted;
+                ctx.promoted = adInfo.promoted;
             });
             let promoted = ctx.promoted;
 
@@ -605,7 +608,7 @@ $(() => {
             let author = ctx.loggedUsername;
 
             adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
-                .then(function(adInfo) {
+                .then(function (adInfo) {
                     notifications.showInfo('Ad is updated');
                     ctx.redirect(`#/ads/details/${adId}`);
                 }).catch(auth.handleError);
@@ -690,9 +693,8 @@ $(() => {
                             }
                             message['time'] = calcTime(message._kmd.ect);
                             ctx.answer = answer;
-                            console.log( ctx.answer);
+                            console.log(ctx.answer);
                         }
-
 
 
                         console.log(111);
