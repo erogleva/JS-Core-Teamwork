@@ -571,6 +571,8 @@ $(() => {
                     ctx.mileage = parseInt(adInfo.mileage);
                     ctx.price = parseFloat(adInfo.price);
                     ctx.images = adInfo.images;
+                    ctx.promoted = adInfo.promoted;
+                    console.log(ctx.promoted);
 
 
                     let partialsObject = getCommonElements(ctx);
@@ -595,20 +597,26 @@ $(() => {
             let publishedDate = new Date();
 
             let images = ctx.params.images;
-            adService.loadAdDetails(adId).then(function (adInfo) {
-                    ctx.promoted = adInfo.promoted;
-            });
-            let promoted = ctx.promoted;
 
-            if (auth.isAuthed()) {
-                ctx.loggedUsername = sessionStorage.getItem('username');
-            }
-            let author = ctx.loggedUsername;
+            adService.loadAdDetails(adId)
+                .then(function (adInfo) {
+                    if(adInfo.promoted) {
+                        ctx.promoted = true;
+                    } else {
+                        ctx.promoted = false;
+                    }
 
-            adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted)
-                .then(function(adInfo) {
-                    notifications.showInfo('Ad is updated');
-                    ctx.redirect(`#/ads/details/${adId}`);
+                    if (auth.isAuthed()) {
+                        ctx.loggedUsername = sessionStorage.getItem('username');
+                    }
+
+                    let author = ctx.loggedUsername;
+
+                    adService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, ctx.promoted)
+                        .then(function(adInfo) {
+                            notifications.showInfo('Ad is updated');
+                            ctx.redirect(`#/ads/details/${adId}`);
+                        });
                 }).catch(auth.handleError);
         }
 
