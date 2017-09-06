@@ -531,9 +531,9 @@ $(() => {
                     context.mileage = parseInt(adInfo.mileage);
                     context.price = parseFloat(adInfo.price);
                     if (!adInfo.images) {
-                        context.image = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                        context.images = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
                     } else {
-                        context.image = adInfo.images;
+                        context.images = adInfo.images;
                     }
 
 
@@ -592,7 +592,6 @@ $(() => {
             let price = parseFloat(ctx.params.price);
             let publishedDate = new Date();
 
-            let image = ctx.params.images;
             let images = ctx.params.images;
             adService.loadAdDetails(adId).then(function (adInfo) {
                     ctx.promoted = adInfo.promoted;
