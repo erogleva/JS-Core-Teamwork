@@ -11,9 +11,9 @@ Your project should implement at least the following functionality:
 ```diff +
 •	Create new content (e.g. post new blog article, post new listing, upload new photo, create new issue)
 ```
-
+```diff +
 •	Edit existing content(e.g. editing blog post content, photo captions, issue status)
-
+```
 
 •	Delete existing content(e.g. deleting posts, issues, photoes, publications)
 
