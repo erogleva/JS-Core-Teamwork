@@ -1,13 +1,15 @@
-
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <div class="single category">
-            <h3 class="side-title">Brands</h3>
-            <ul class="list-unstyled">
-                {{#each category}}
-                <li><a href="" title="">{{name}} <span class="badge pull-right">{{#if models}}Модели:{{len models}}{{/if}}</span></a>
-                {{/each}}
-            </ul>
+{{#if category}}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="single category">
+                <h3 class="side-title">Brands</h3>
+                <ul class="list-unstyled">
+                    {{#each category}}
+                    <li><a href="" title="">{{name}} <span class="badge pull-right">{{#if models}}
+                        Модели:{{len models}}{{/if}}</span></a>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
     </div>
-</div>
+{{/if}}

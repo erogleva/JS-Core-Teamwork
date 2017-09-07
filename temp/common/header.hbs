@@ -32,19 +32,6 @@
             </div>
             <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <div class="navbar-form" role="search">
-                        <div class="input-group">
-                            <input id="searchBar" value="" type="text" class="form-control" placeholder="Search"
-                                   name="tags">
-                            <span class="input-group-btn">
-                                    <a id="button" href="" type="submit" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-search"></span> Search
-                                    </a>
-                            </span>
-                        </div>
-                    </div>
-                </li>
                 <!--{{#if isAdmin}}-->
                     <!--<li class="dropdown" id="admin">-->
                         <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"-->
@@ -60,6 +47,19 @@
                     <!--</li>-->
                 <!--{{/if}}-->
                 {{#if loggedUsername}}
+                    <li>
+                        <div class="navbar-form" role="search">
+                            <div class="input-group">
+                                <input id="searchBar" value="" type="text" class="form-control" placeholder="Search"
+                                       name="tags">
+                                <span class="input-group-btn">
+                                    <a id="button" href="" type="submit" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-search"></span> Search
+                                    </a>
+                            </span>
+                            </div>
+                        </div>
+                    </li>
                     <li>
                         <a href="#/user/details/{{loggedUsername}}">
                             <span class="glyphicon glyphicon-user"></span> Welcome, {{loggedUsername}}

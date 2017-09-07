@@ -1,7 +1,7 @@
-let brandService = (()=>{
+let brandService = (() => {
 
     function getAllBrands() {
-            return requester.get('appdata', 'brand');
+        return requester.get('appdata', 'brand');
     }
 
     function createBrand(data) {
@@ -9,7 +9,7 @@ let brandService = (()=>{
     }
 
     function editBrand(id, data) {
-        let endpoint = `brand/${id}` ;
+        let endpoint = `brand/${id}`;
         console.log(endpoint);
         return requester.update('appdata', endpoint, data);
     }
@@ -23,6 +23,7 @@ let brandService = (()=>{
         let endpoint = `brand?query={"name":"${name}"}`;
         return requester.del('appdata', endpoint);
     }
+
     return {
         getAllBrands,
         createBrand,

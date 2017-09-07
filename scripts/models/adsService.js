@@ -1,4 +1,4 @@
-let adService = (() => {
+let adsService = (() => {
     function createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate) {
         return requester.post('appdata', 'ads', {title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate});
     }
