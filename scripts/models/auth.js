@@ -1,12 +1,14 @@
 let auth = (() => {
     function isAuthed() {
-        return sessionStorage.getItem('authtoken') !== null;
+        return sessionStorage.getItem('authtoken') !== null &&
+            sessionStorage.getItem('username') !== 'stupeduser';
     }
     
     function loginAsStupedUser() {
         let username = 'stupeduser';
         let password = 'stupeduser';
-        return requester.post('user', 'login', {username, password}, 'basic');
+
+        return login(username, password);
     }
 
     function saveSession(data) {
