@@ -16,8 +16,7 @@ let adService = (() => {
         return requester.get('appdata', 'ads/' + adId);
     }
 
-    function edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted) {
-
+    function edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted, comments) {
         let adData = {
             title: title,
             description: description,
@@ -29,7 +28,8 @@ let adService = (() => {
             images: images,
             publishedDate: publishedDate,
             author: author,
-            promoted: promoted
+            promoted: promoted,
+            comments: comments
         };
         return requester.update('appdata', 'ads/' + adId, adData);
     }

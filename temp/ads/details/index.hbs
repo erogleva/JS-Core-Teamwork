@@ -1,5 +1,6 @@
 <figure class="snip1492-details">
     <figcaption class="details">
+
         <h3>{{title}}</h3><br/>
         <p>Brand: {{brand}}</p>
         <p>Model: {{model}}</p>
@@ -8,14 +9,14 @@
         <div class="price">
             {{price}} BGN
         </div><br/>
+        <img class="details-image" src="{{images}}" width="350">
         <p>{{description}}</p>
         <p>Owner: {{author}}</p>
         <p>Published: {{publishedDate}} ago</p>
-        <img class="details-image" src="{{images}}">
+
     </figcaption>
 
     {{#if isAuthor}}
-        <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
         <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
@@ -28,5 +29,9 @@
     <button type="button" class="btn btn-secondary"><a href="#/comment/:{{id}}">Leave a comment</a></button>
         {{else}}
     {{/if}}
-
 </figure>
+
+{{#if comments}}
+    {{>comments}}
+{{/if}}
+

@@ -105,6 +105,39 @@ $(() => {
 
         this.post('#/admin/models/edit/:brand/:model', handleEditModel);
 
+        this.post('#/ads/details/add/comments/:id', handleAdsComment);
+
+        function handleAdsComment(ctx) {
+            let id = ctx.params.id;
+            let username = sessionStorage.getItem('username');
+            let rString = Math.random().toString(36).slice(2);
+            adService.loadAdDetails(id).then(function (data) {
+                if (data.comments) {
+
+                    data.comments.push({
+                        "id": rString,
+                        "autor": sessionStorage.getItem('username'),
+                        "avatar": sessionStorage.getItem('avatar'),
+                        "text": ctx.params.comment
+                    });
+                } else {
+                    data.comments = []
+                    data.comments.push({
+                        "id": rString,
+                        "autor": sessionStorage.getItem('username'),
+                        "avatar": sessionStorage.getItem('avatar'),
+                        "text": ctx.params.comment
+                    })
+                }
+                adService.edit(id, data.title, data.description, data.brand, data.model, data.city, data.mileage, data.price, data.images, data.publishedDate, data.author, data.promoted, data.comments).then(function () {
+                    notifications.showInfo('Success')
+                    ctx.redirect(`#/ads/details/${id}`)
+                });
+
+            })
+
+        }
+
         function handleEditModel(ctx) {
             let brand = ctx.params.brand;
             let oldModel = ctx.params.model;
@@ -300,16 +333,13 @@ $(() => {
 
         function displayHome(ctx) {
             adService.getAds().then(function (data) {
-                console.log(11111);
                 for (let ad of data) {
                     if (!ad.images) {
                         ad.images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
                     }
-
                     ad.description = ad.description.substring(0, 15) + "...";
                 }
                 ctx.ads = data;
-
 
                 brandService.getAllBrands().then(function (info) {
                     console.log(info);
@@ -395,8 +425,9 @@ $(() => {
             }
         }
 
-        async function handleLogout(ctx) {
-            auth.logout().then(function () {
+        function handleLogout(ctx) {
+            auth.logout().then(function (data) {
+                console.log(1);
                 sessionStorage.clear();
                 notifications.showInfo('Logout successful.');
                 ctx.redirect("#/home");
@@ -517,45 +548,47 @@ $(() => {
         }
 
         function displayDetailsAd(context) {
-            if (auth.isAuthed()) {
-                context.loggedUsername = sessionStorage.getItem('username');
-            }
-            let adId = context.params.id;
+                if (auth.isAuthed()) {
+                    context.loggedUsername = sessionStorage.getItem('username');
+                }
+                let adId = context.params.id;
 
-            adService.loadAdDetails(adId)
-                .then(function (adInfo) {
-                    context.id = adId;
-                    context.title = adInfo.title;
-                    context.description = adInfo.description;
-                    context.publishedDate = calcTime(adInfo.publishedDate);
-                    context.author = adInfo.author;
-                    context.brand = adInfo.brand;
-                    context.model = adInfo.model;
-                    context.city = adInfo.city;
-                    context.mileage = parseInt(adInfo.mileage);
-                    context.price = parseFloat(adInfo.price);
-                    if (!adInfo.images) {
-                        context.images = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
-                    } else {
-                        context.images = adInfo.images;
-                    }
+                adService.loadAdDetails(adId)
+                    .then(function (adInfo) {
+                        context.id = adId;
+                        context.title = adInfo.title;
+                        context.description = adInfo.description;
+                        context.publishedDate = calcTime(adInfo.publishedDate);
+                        context.author = adInfo.author;
+                        context.brand = adInfo.brand;
+                        context.model = adInfo.model;
+                        context.city = adInfo.city;
+                        context.mileage = parseInt(adInfo.mileage);
+                        context.price = parseFloat(adInfo.price);
+                        context.comments = adInfo.comments;
+                        if (!adInfo.images) {
+                            context.images = 'https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg';
+                        } else {
+                            context.images = adInfo.images;
+                        }
+                        if (context.author === context.loggedUsername || sessionStorage.getItem('userRole')) {
 
+                            context.isAuthor = true;
+                        }
 
-                    if (context.author === context.loggedUsername) {
-                        context.isAuthor = true;
-                    }
+                        brandService.getAllBrands().then(function (data) {
+                            context.category = data;
 
-                    brandService.getAllBrands().then(function (data) {
-                        context.category = data;
-
-                        let partialsObject = getCommonElements(context);
-                        partialsObject["content"] = './temp/ads/details/index.hbs';
-                        context.loadPartials(partialsObject)
-                            .then(function () {
-                                this.partial('./temp/common/main.hbs');
-                            });
-                    })
-                }).catch(notifications.handleError);
+                            let partialsObject = getCommonElements(context);
+                            partialsObject["content"] = './temp/ads/details/index.hbs';
+                            partialsObject["comments"] = './temp/ads/details/comments/index.hbs';
+                            partialsObject["form"] = './temp/ads/details/comments/form.hbs';
+                            context.loadPartials(partialsObject)
+                                .then(function () {
+                                    this.partial('./temp/common/main.hbs');
+                                });
+                        })
+                    }).catch(notifications.handleError);
         }
 
         function displayEditAd(ctx) {

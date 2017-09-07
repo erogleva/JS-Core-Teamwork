@@ -1,0 +1,19 @@
+{{#each comments}}
+    <div class="chat_area">
+        <ul class="list-unstyled">
+            <li class="left clearfix">
+                     <span class="chat-img1 pull-left">
+                     <a href="#/user/details/{{author}}"><img
+                             src="{{avatar}}"
+                             alt="{{author}} Avatar" class="img-circle"></a>
+                     </span>
+                <div class="chat-body1 clearfix">
+                    <p align="left">{{text}}</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+{{/each}}
+<div class="message_write">
+    {{> form}}
+</div>
