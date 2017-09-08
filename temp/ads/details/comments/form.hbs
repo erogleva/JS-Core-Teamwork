@@ -1,17 +1,18 @@
 {{#if loggedUsername}}
-<div class="message_write">
-    <form method="post" action="#/ads/details/add/comments/{{id}}">
-        <textarea class="form-control" required placeholder="Type a message" id="comment" name="comment"></textarea>
-        <div class="clearfix"></div>
-        <div class="chat_bottom">
-            <input type='submit' class="pull-right btn btn-success" value="Send">
-        </div>
-    </form>
-</div>
-    {{else}}
     <div class="message_write">
         <form method="post" action="#/ads/details/add/comments/{{id}}">
-            <textarea class="form-control" disabled placeholder="You must be login" id="comment" name="comment"></textarea>
+            <textarea class="form-control" required placeholder="Type a message" id="comment" name="comment"></textarea>
+            <div class="clearfix"></div>
+            <div class="chat_bottom">
+                <input type='submit' class="pull-right btn btn-success" value="Send">
+            </div>
+        </form>
+    </div>
+{{else}}
+    <div class="message_write">
+        <form method="post" action="#/ads/details/add/comments/{{id}}">
+            <textarea class="form-control" disabled placeholder="You must be logged in in order to comment" id="comment"
+                      name="comment"></textarea>
             <div class="clearfix"></div>
             <div class="chat_bottom">
                 <input type='submit' disabled class="pull-right btn btn-success" value="Send">
@@ -19,5 +20,3 @@
         </form>
     </div>
 {{/if}}
-
-

@@ -1,5 +1,4 @@
 let brandService = (() => {
-
     function getAllBrands() {
         return requester.get('appdata', 'brand');
     }

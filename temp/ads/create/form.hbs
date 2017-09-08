@@ -18,11 +18,11 @@
                    for="category">Brand</label>
             <div class="col-sm-4">
                 <select class="form-control" id="brand" name="brand">
-                <!--{{#each categories}}-->
-                    <!--<option-->
-                    <!--value="{{this.id}}">{{this.name}}-->
-                    <!--</option>-->
-                        <!--{{/each}}-->
+                    {{#each brands}}
+                        <option
+                                value="{{this.id}}">{{this.name}}
+                        </option>
+                    {{/each}}
                 </select>
             </div>
         </div>
@@ -31,11 +31,11 @@
                    for="category">Model</label>
             <div class="col-sm-4">
                 <select class="form-control" id="model" name="model">
-                <!--{{#each categories}}-->
-                    <!--<option-->
-                    <!--value="{{this.id}}">{{this.name}}-->
-                    <!--</option>-->
-                        <!--{{/each}}-->
+                    {{#each models}}
+                        <option
+                                value="{{this.id}}">{{this.name}}
+                        </option>
+                    {{/each}}
                 </select>
             </div>
         </div>
@@ -44,18 +44,19 @@
                    for="category">City</label>
             <div class="col-sm-4">
                 <select class="form-control" id="city" name="city">
-                <!--{{#each categories}}-->
-                    <!--<option-->
-                    <!--value="{{this.id}}">{{this.name}}-->
-                    <!--</option>-->
-                        <!--{{/each}}-->
+                    {{#each cities}}
+                        <option
+                                value="{{this.id}}">{{this.name}}
+                        </option>
+                    {{/each}}
                 </select>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-4 control-label">Mileage</label>
             <div class="col-sm-4 ">
-                <input type="number" class="form-control" id="mileage" placeholder="Mileage (in km.)" name="mileage" required>
+                <input type="number" class="form-control" id="mileage" placeholder="Mileage (in km.)" name="mileage"
+                       required>
             </div>
         </div>
         <div class="form-group">
@@ -71,12 +72,6 @@
                        name="images">
             </div>
         </div>
-        <!--<div class="form-group">-->
-        <!--<label class="control-label col-sm-4">Picture</label>-->
-        <!--<div class="col-sm-4">-->
-        <!--<input class="form-control" type="file" name="photo" required>-->
-        <!--</div>-->
-        <!--</div>-->
         <div class="form-group">
             <div class="col-sm-4 col-sm-offset-4">
                 <a class="btn btn-default" href="#/home">Cancel</a>

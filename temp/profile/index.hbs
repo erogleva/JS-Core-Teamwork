@@ -44,7 +44,7 @@
                     {{/if}}
                     </tbody>
                 </table>
-                <a href="#/user/ads/{{data.username}}" class="btn btn-primary">My Sales Performance</a>
+                <a href="#/user/ads/{{data.username}}" class="btn btn-primary">User Ads</a>
             </div>
         </div>
     </div>
@@ -59,14 +59,13 @@
             </span>
             {{#if userRole}}
                 <a href="#/admin/brands" stype="button" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-pencil"></i>Brands
+                    <i class="glyphicon glyphicon-pencil"></i> Brands
                 </a>
                 <a href="#/admin/models" stype="button" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-pencil"></i>Models
+                    <i class="glyphicon glyphicon-pencil"></i> Models
                 </a>
             {{/if}}
         </div>
-
     {{else if userRole}}
         <div class="panel-footer">
              <span class="pull-right">
@@ -80,21 +79,19 @@
 
             {{#if data.isBlocked}}
                 <a href="#/user/unban/{{data.username}}" class="btn btn-sm btn-warning">
-                    <i class="glyphicon glyphicon-remove"></i> UNBAN
+                    <i class="glyphicon glyphicon-remove"></i> Unban User
                 </a>
-                {{else}}
-            <a href="#/user/ban/{{data.username}}" class="btn btn-sm btn-danger">
-                <i class="glyphicon glyphicon-remove"></i> BAN USER
-            </a>
+            {{else}}
+                <a href="#/user/ban/{{data.username}}" class="btn btn-sm btn-danger">
+                    <i class="glyphicon glyphicon-remove"></i> Ban User
+                </a>
             {{/if}}
         </div>
-        {{else}}
+    {{else if loggedUsername}}
         <div class="panel-footer">
             <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-envelope"></i> Send Message
             </a>
         </div>
     {{/if}}
-
-
 </div>

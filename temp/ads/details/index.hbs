@@ -1,6 +1,5 @@
 <figure class="snip1492-details">
     <figcaption class="details">
-
         <h3>{{title}}</h3><br/>
         <p>Brand: {{brand}}</p>
         <p>Model: {{model}}</p>
@@ -14,9 +13,7 @@
         <p>{{description}}</p>
         <p>Owner: {{author}}</p>
         <p>Published: {{publishedDate}} ago</p>
-
     </figcaption>
-
     {{#if isAuthor}}
         <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
@@ -25,7 +22,7 @@
         </a>
     {{else if loggedUsername}}
         <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
-            <i class="glyphicon glyphicon-envelope"></i> Send Message to owner
+            <i class="glyphicon glyphicon-envelope"></i> Send Message
         </a>
     {{/if}}
 </figure>
@@ -33,5 +30,3 @@
 <div class="message_write">
     {{> form}}
 </div>
-
-

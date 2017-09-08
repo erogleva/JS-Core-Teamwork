@@ -3,7 +3,7 @@ let auth = (() => {
         return sessionStorage.getItem('authtoken') !== null &&
             sessionStorage.getItem('username') !== 'stupeduser';
     }
-    
+
     function loginAsStupedUser() {
         let username = 'stupeduser';
         let password = 'stupeduser';

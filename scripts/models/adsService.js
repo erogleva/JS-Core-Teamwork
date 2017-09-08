@@ -1,14 +1,26 @@
 let adsService = (() => {
     function createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate) {
-        return requester.post('appdata', 'ads', {title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate});
+        return requester.post('appdata', 'ads', {
+            title,
+            description,
+            brand,
+            model,
+            city,
+            mileage,
+            price,
+            images,
+            author,
+            promoted,
+            publishedDate
+        });
     }
 
     function getAds() {
         return requester.get('appdata', 'ads');
     }
 
-    function getUserAds(userId) {
-        let endpoint = `ads?query={"_acl.creator":"${userId}"}`;
+    function getUserAds(username) {
+        let endpoint = `ads?query={"author":"${username}"}`;
         return requester.get('appdata', endpoint);
     }
 

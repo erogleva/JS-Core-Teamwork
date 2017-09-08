@@ -9,27 +9,18 @@
 <div class="chat_area">
     <ul class="list-unstyled">
         <li class="left clearfix">
-                     <span class="chat-img1 pull-{{data.style}}">
-                     <a href="#/user/details/{{data.sender}}"><img
-                             src="{{data.avatar}}"
-                             alt="{{data.sender}} Avatar" class="img-circle"></a>
-                     </span>
             <div class="chat-body1 clearfix">
                 <p align="{{data.style}}">{{data.text}}</p>
-                <div class="chat_time pull-{{data.style}}">{{data.time}} Ago</div>
+                <div class="chat_time pull-{{data.style}}">{{data.time}} ago by <a
+                        href="#/user/details/{{data.sender}}">{{data.sender}}</a></div>
             </div>
         </li>
         {{#each answer}}
             <li class="left clearfix">
-                     <span class="chat-img1 pull-{{style}}">
-                          <a href="#/user/details/{{sender}}">
-                     <img src="{{avatar}}"
-                          alt="{{sender}} Avatar" class="img-circle">
-                          </a>
-                     </span>
                 <div class="chat-body1 clearfix">
                     <p align="{{style}}">  {{text}}</p>
-                    <div class="chat_time pull-{{style}}">{{time}} Ago</div>
+                    <div class="chat_time pull-{{style}}">{{time}} ago by <a
+                            href="#/user/details/{{sender}}">{{sender}}</a></div>
                 </div>
             </li>
         {{/each}}
