@@ -44,12 +44,11 @@
                     {{/if}}
                     </tbody>
                 </table>
-                <a href="#/user/ads/{{data.username}}" class="btn btn-primary">User Ads</a>
             </div>
         </div>
     </div>
-    {{#if isOwner}}
-        <div class="panel-footer">
+    <div class="panel-footer">
+        {{#if isOwner}}
             <a href="#/user/messages" stype="button" class="btn btn-sm btn-primary"><i
                     class="glyphicon glyphicon-envelope"></i> Messages</a>
             <span class="pull-right">
@@ -57,18 +56,8 @@
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
             </span>
-            {{#if userRole}}
-                <a href="#/admin/brands" stype="button" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-pencil"></i> Brands
-                </a>
-                <a href="#/admin/models" stype="button" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-pencil"></i> Models
-                </a>
-            {{/if}}
-        </div>
-    {{else if userRole}}
-        <div class="panel-footer">
-             <span class="pull-right">
+        {{else if userRole}}
+            <span class="pull-right">
                 <a href="#/user/edit/{{data.username}}" type="button" class="btn btn-sm btn-warning">
                     <i class="glyphicon glyphicon-edit"></i> Edit profile
                 </a>
@@ -76,7 +65,6 @@
             <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-envelope"></i> Send Message
             </a>
-
             {{#if data.isBlocked}}
                 <a href="#/user/unban/{{data.username}}" class="btn btn-sm btn-warning">
                     <i class="glyphicon glyphicon-remove"></i> Unban User
@@ -86,12 +74,13 @@
                     <i class="glyphicon glyphicon-remove"></i> Ban User
                 </a>
             {{/if}}
-        </div>
-    {{else if loggedUsername}}
-        <div class="panel-footer">
+        {{else if loggedUsername}}
             <a href="#/message/send/{{data.username}}" class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-envelope"></i> Send Message
             </a>
-        </div>
-    {{/if}}
+        {{/if}}
+        <a href="#/user/ads/{{data.username}}" class="btn btn-sm btn-primary">
+            <i class="glyphicon glyphicon-th-large"></i> User Ads
+        </a>
+    </div>
 </div>

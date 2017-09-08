@@ -89,6 +89,7 @@ $(() => {
         function displayHome(ctx) {
             brandService.getAllBrands().then(function (categories) {
                 ctx.category = categories;
+                ctx.message = "All advertisements";
 
                 adsService.getAds().then(function (data) {
                     for (let ad of data) {
@@ -214,7 +215,6 @@ $(() => {
                 }
 
                 ctx.data = data[0];
-                ctx.userRole = sessionStorage.getItem('userRole');
 
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["content"] = './temp/profile/index.hbs';
@@ -296,6 +296,7 @@ $(() => {
 
             brandService.getAllBrands().then(function (data) {
                 ctx.category = data;
+                ctx.brands = data;
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["createForm"] = './temp/ads/create/form.hbs';
                 partialsObject["content"] = './temp/ads/create/index.hbs';
@@ -693,7 +694,7 @@ $(() => {
                 let data = {"name": brandInfo[0].name, "models": brandInfo[0].models};
 
                 brandService.editBrand(brandInfo[0]._id, data).then(function (info) {
-                    notifications.showInfo('Model added successfully');
+                    notifications.showInfo('Model added successfully.');
                     ctx.redirect(`#/admin/models`)
                 });
             }).catch(notifications.handleError);
@@ -847,12 +848,15 @@ $(() => {
         }
 
         function displayUserAds(ctx) {
-            adsService.getUserAds(ctx.params.username).then(function (ads) {
+            let username = ctx.params.username;
+
+            adsService.getUserAds(username).then(function (ads) {
                 ctx.ads = ads;
                 ctx.username = ctx.params.username;
+                ctx.message = `${username}'s advertisements`;
 
                 let partialsObject = getCommonElements(ctx);
-                partialsObject["content"] = './temp/profile/ads/index.hbs';
+                partialsObject["content"] = './temp/home/index.hbs';
                 partialsObject["ad"] = './temp/ads/ad.hbs';
 
                 brandService.getAllBrands().then(function (categories) {
@@ -866,12 +870,14 @@ $(() => {
         }
 
         function displaySearch(ctx) {
+            let query = ctx.params.query;
+
             brandService.getAllBrands().then(function (categories) {
                 ctx.category = categories;
+                ctx.message = `Search results for: "${query}"`;
 
                 adsService.getAds().then(function (data) {
-                    let searchQuery = ctx.params.query.toLowerCase();
-                    data = data.filter(ad => ad.title.toLowerCase().indexOf(searchQuery) !== -1);
+                    data = data.filter(ad => ad.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
 
                     for (let ad of data) {
                         ad.description = ad.description.substring(0, 15) + "...";
@@ -899,6 +905,7 @@ $(() => {
         function getCommonElements(ctx) {
             if (auth.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
+                ctx.userRole = sessionStorage.getItem('userRole');
             }
 
             return {
@@ -906,7 +913,6 @@ $(() => {
                 'footer': './temp/common/footer.hbs',
                 'leftColumn': './temp/common/leftColumn.hbs'
             }
-
         }
 
         function calcTime(dateIsoFormat) {
