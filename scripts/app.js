@@ -105,15 +105,15 @@ $(() => {
 
         this.post('#/ads/details/add/comments/:id', handleAdsComment);
 
-        this.post('#/ads/comments/delete/:ad_id', handleDeleteComment);
+        this.get('#/ads/comments/delete/:id/:ad_id', handleDeleteComment);
 
         function handleDeleteComment(ctx) {
-            let id = ctx.params.ad_id;
-            let commentId = ctx.params.commentId;
+            let adsId = ctx.params.id;
+            let commentId = ctx.params.ad_id;
             adsService.removeComment(commentId)
                 .then(function () {
                     notifications.showInfo('Comment deleted.');
-                    ctx.redirect('#/ads/details/' + id)
+                    ctx.redirect('#/ads/details/' + adsId)
                 }).catch(notifications.handleError)
         }
 
@@ -122,7 +122,7 @@ $(() => {
             let username = sessionStorage.getItem('username');
             adsService.addComment(id, username, sessionStorage.getItem('avatar'), ctx.params.comment)
                 .then(function () {
-                    notifications.showInfo('Comment added.')
+                    notifications.showInfo('Comment added.');
                     ctx.redirect(`#/ads/details/${id}`)
                 }).catch(notifications.handleError);
         }
@@ -408,6 +408,7 @@ $(() => {
 
         function handleLogout(ctx) {
             auth.logout().then(function () {
+                sessionStorage.clear();
                 auth.loginAsStupedUser().then(function (data) {
                     auth.saveSession(data);
                     notifications.showInfo('Logout successful.');
@@ -558,7 +559,8 @@ $(() => {
                         .then(function (comments) {
                             context.comments = comments;
                             for (let comment of context.comments) {
-                                if (sessionStorage.getItem('username') === comment.author) {
+                                if (sessionStorage.getItem('username') === comment.author
+                                    || sessionStorage.getItem('userRole')==='admin') {
                                     comment.isOwner = true;
                                 }
                             }
