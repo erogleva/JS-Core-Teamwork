@@ -8,12 +8,18 @@
                              alt="{{author}} Avatar" class="img-circle"></a>
                      </span>
                 <div class="chat-body1 clearfix">
-                    <p align="left">{{text}}</p>
+                    <p align="left">{{content}}</p>
                 </div>
+                {{#if isOwner}}
+                    <form method="post" action="#/ads/comments/delete/{{ad_id}}">
+                        <input type="hidden" name="commentId" value="{{_id}}">
+                        <input type='submit' class="pull-right btn btn-danger" value="Delete">
+                    </form>
+                    <form method="get" action="#/ads/comments/edit/{{_id}}">
+                        <input type='submit' class="pull-right btn btn-warning" value="Edit">
+                    </form>
+                {{/if}}
             </li>
         </ul>
     </div>
 {{/each}}
-<div class="message_write">
-    {{> form}}
-</div>

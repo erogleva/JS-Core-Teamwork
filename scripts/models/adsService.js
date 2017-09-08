@@ -16,6 +16,15 @@ let adsService = (() => {
         return requester.get('appdata', 'ads/' + adId);
     }
 
+    function getAdComments(adId) {
+        let endpoint = `comments?query={"ad_id":"${adId}"}`;
+        return requester.get('appdata', endpoint);
+    }
+
+    function addComment(adId, author, avatar, content) {
+        return requester.post('appdata', 'comments', {author, content, avatar, ad_id: adId});
+    }
+
     function edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted, comments) {
         let adData = {
             title: title,
@@ -38,12 +47,19 @@ let adsService = (() => {
         return requester.del('appdata', 'ads/' + adId);
     }
 
+    function removeComment(commentId) {
+        return requester.del('appdata', 'comments/' + commentId);
+    }
+
     return {
         createAd,
         getAds,
         getUserAds,
         loadAdDetails,
         edit,
-        removeAd
+        removeAd,
+        removeComment,
+        addComment,
+        getAdComments
     }
 })();

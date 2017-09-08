@@ -99,42 +99,32 @@ $(() => {
 
         this.post('#/admin/models/add/:brand', handleAddModel);
 
-
         this.get('/admin/model/edit/:brand/:model', displayEditModel);
 
         this.post('#/admin/models/edit/:brand/:model', handleEditModel);
 
         this.post('#/ads/details/add/comments/:id', handleAdsComment);
 
+        this.post('#/ads/comments/delete/:ad_id', handleDeleteComment);
+
+        function handleDeleteComment(ctx) {
+            let id = ctx.params.ad_id;
+            let commentId = ctx.params.commentId;
+            adsService.removeComment(commentId)
+                .then(function () {
+                    notifications.showInfo('Comment deleted.');
+                    ctx.redirect('#/ads/details/' + id)
+                }).catch(notifications.handleError)
+        }
+
         function handleAdsComment(ctx) {
             let id = ctx.params.id;
             let username = sessionStorage.getItem('username');
-            let rString = Math.random().toString(36).slice(2);
-            adsService.loadAdDetails(id).then(function (data) {
-                if (data.comments) {
-
-                    data.comments.push({
-                        "id": rString,
-                        "autor": sessionStorage.getItem('username'),
-                        "avatar": sessionStorage.getItem('avatar'),
-                        "text": ctx.params.comment
-                    });
-                } else {
-                    data.comments = []
-                    data.comments.push({
-                        "id": rString,
-                        "autor": sessionStorage.getItem('username'),
-                        "avatar": sessionStorage.getItem('avatar'),
-                        "text": ctx.params.comment
-                    })
-                }
-                adsService.edit(id, data.title, data.description, data.brand, data.model, data.city, data.mileage, data.price, data.images, data.publishedDate, data.author, data.promoted, data.comments).then(function () {
-                    notifications.showInfo('Success')
+            adsService.addComment(id, username, sessionStorage.getItem('avatar'), ctx.params.comment)
+                .then(function () {
+                    notifications.showInfo('Comment added.')
                     ctx.redirect(`#/ads/details/${id}`)
-                });
-
-            })
-
+                }).catch(notifications.handleError);
         }
 
         function handleEditModel(ctx) {
@@ -346,7 +336,7 @@ $(() => {
             }).catch(notifications.handleError)
         }
 
-        async function displayLogin(ctx) {
+        function displayLogin(ctx) {
             let partialsObject = getCommonElements(ctx);
             partialsObject["loginForm"] = './temp/login/form.hbs';
             partialsObject["content"] = './temp/login/index.hbs';
@@ -558,25 +548,33 @@ $(() => {
                     context.city = adInfo.city;
                     context.mileage = parseInt(adInfo.mileage);
                     context.price = parseFloat(adInfo.price);
-                    context.comments = adInfo.comments;
                     context.images = adInfo.images;
 
-                    if (context.author === context.loggedUsername || sessionStorage.getItem('userRole')) {
+                    if (context.author === context.loggedUsername ||
+                        sessionStorage.getItem('userRole')) {
                         context.isAuthor = true;
                     }
+                    adsService.getAdComments(adId)
+                        .then(function (comments) {
+                            context.comments = comments;
+                            for (let comment of context.comments) {
+                                if (sessionStorage.getItem('username') === comment.author) {
+                                    comment.isOwner = true;
+                                }
+                            }
+                            brandService.getAllBrands().then(function (data) {
+                                context.category = data;
 
-                    brandService.getAllBrands().then(function (data) {
-                        context.category = data;
-
-                        let partialsObject = getCommonElements(context);
-                        partialsObject["content"] = './temp/ads/details/index.hbs';
-                        partialsObject["comments"] = './temp/ads/details/comments/index.hbs';
-                        partialsObject["form"] = './temp/ads/details/comments/form.hbs';
-                        context.loadPartials(partialsObject)
-                            .then(function () {
-                                this.partial('./temp/common/main.hbs');
-                            });
-                    })
+                                let partialsObject = getCommonElements(context);
+                                partialsObject["content"] = './temp/ads/details/index.hbs';
+                                partialsObject["comments"] = './temp/ads/details/comments/index.hbs';
+                                partialsObject["form"] = './temp/ads/details/comments/form.hbs';
+                                context.loadPartials(partialsObject)
+                                    .then(function () {
+                                        this.partial('./temp/common/main.hbs');
+                                    });
+                            })
+                        })
                 }).catch(notifications.handleError);
         }
 
