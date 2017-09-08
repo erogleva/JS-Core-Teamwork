@@ -107,6 +107,8 @@ $(() => {
 
         this.get('#/ads/comments/delete/:id/:ad_id', handleDeleteComment);
 
+        this.get('#/search/:query', displaySearch);
+
         function handleDeleteComment(ctx) {
             let adsId = ctx.params.id;
             let commentId = ctx.params.ad_id;
@@ -560,7 +562,7 @@ $(() => {
                             context.comments = comments;
                             for (let comment of context.comments) {
                                 if (sessionStorage.getItem('username') === comment.author
-                                    || sessionStorage.getItem('userRole')==='admin') {
+                                    || sessionStorage.getItem('userRole') === 'admin') {
                                     comment.isOwner = true;
                                 }
                             }
@@ -800,6 +802,29 @@ $(() => {
             msgService.sendMsg(answer, sender, recipient, text).then(function () {
                 ctx.redirect(`#/user/message/${answer}`);
             })
+        }
+
+        function displaySearch(ctx) {
+            brandService.getAllBrands().then(function (categories) {
+                ctx.category = categories;
+                adsService.getAds().then(function (data) {
+                    let searchQuery = ctx.params.query.toLowerCase();
+                    data = data.filter(ad => ad.title.toLowerCase().indexOf(searchQuery) !== -1);
+                    console.log(data);
+
+                    for (let ad of data) {
+                        ad.description = ad.description.substring(0, 15) + "...";
+                    }
+
+                    ctx.ads = data;
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["content"] = './temp/home/index.hbs';
+
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    })
+                });
+            }).catch(notifications.handleError)
         }
 
         function checkUserNameAndPassword(username, password) {
