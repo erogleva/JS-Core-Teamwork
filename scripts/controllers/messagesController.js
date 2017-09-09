@@ -10,7 +10,7 @@ let messagesController = (()=>{
         msgService.getSentMessages().then(function (data) {
             for (let message of data) {
                 if (message.title) {
-                    message['time'] = calcTime(message._kmd.ect);
+                    message['time'] = utils.calcTime(message._kmd.ect);
                     allMessages.push(message);
                 }
             }
@@ -18,7 +18,7 @@ let messagesController = (()=>{
             msgService.getReceivedMessages().then(function (data) {
                 for (let message of data) {
                     if (message.title) {
-                        message['time'] = calcTime(message._kmd.ect);
+                        message['time'] = utils.calcTime(message._kmd.ect);
                         allMessages.push(message);
                     }
                 }
@@ -55,7 +55,7 @@ let messagesController = (()=>{
             ctx.category = brandInfo;
 
             msgService.getSingleMessage(id).then(function (data) {
-                data[0]['time'] = calcTime(data[0]._kmd.ect);
+                data[0]['time'] = utils.calcTime(data[0]._kmd.ect);
 
                 if (data[0].sender === sessionStorage.getItem('username')) {
                     data[0].style = 'right';
@@ -80,7 +80,7 @@ let messagesController = (()=>{
                             });
                         }
 
-                        message['time'] = calcTime(message._kmd.ect);
+                        message['time'] = utils.calcTime(message._kmd.ect);
                         ctx.answer = answer;
                         console.log(ctx.answer);
                     }

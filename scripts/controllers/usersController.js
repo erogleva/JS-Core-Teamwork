@@ -1,4 +1,4 @@
-let usersController = (()=>{
+let usersController = (() => {
     function displayLogin(ctx) {
         let partialsObject = utils.getCommonElements(ctx);
         partialsObject["loginForm"] = './temp/login/form.hbs';
@@ -25,9 +25,9 @@ let usersController = (()=>{
             }
             auth.saveSession(userInfo);
             auth.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
-               // if (data[0].userRole) {
+                if (data[0].userRole) {
                     sessionStorage.setItem('userRole', 'admin')
-               // }
+                }
 
                 notifications.showInfo('Login successful.');
                 ctx.redirect("#/home");
