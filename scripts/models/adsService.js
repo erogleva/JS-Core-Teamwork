@@ -43,6 +43,11 @@ let adsService = (() => {
         return requester.update('appdata', 'ads/' + adId, adData);
     }
 
+    function getAdsByBrand(brandName) {
+        let endpoint = `ads?query={"brand":"${brandName}"}&sort={"_kmd.ect": -1}`;
+        return requester.get('appdata', endpoint);
+    }
+
     function removeAd(adId) {
         return requester.del('appdata', 'ads/' + adId);
     }
@@ -60,6 +65,7 @@ let adsService = (() => {
         removeAd,
         removeComment,
         addComment,
-        getAdComments
+        getAdComments,
+        getAdsByBrand
     }
 })();

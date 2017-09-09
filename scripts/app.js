@@ -1,19 +1,4 @@
 $(() => {
-    // let category = start();
-
-    //function stupedUser() {
-    //    //auth.loginAsStupedUser(1, 2).then(function (data) {
-    //        sessionStorage.setItem('authtoken', data._kmd.authtoken);
-    //    });
-    //}
-
-    //async function start() {
-    //    await stupedUser();
-    //    await app.run();
-    //    let b = await brandService.getAllBrands();
-    //    return b;
-    //}
-
     const app = Sammy('#main', function () {
         Handlebars.registerHelper("len", function (json) {
             return Object.keys(json).length;
@@ -55,7 +40,6 @@ $(() => {
             let adId = ctx.params.id.substr(1);
             adsService.removeAd(adId)
                 .then(function (adInfo) {
-                    console.log(adInfo);
                     notifications.showInfo(`Your ad is deleted.`);
                     ctx.redirect('#/home')
                 }).catch(auth.handleError);
@@ -106,6 +90,25 @@ $(() => {
         this.post('#/ads/details/add/comments/:id', handleAdsComment);
 
         this.get('#/ads/comments/delete/:id/:ad_id', handleDeleteComment);
+
+        this.get('#/brand/:name', displayBrandAdsPage);
+
+        function displayBrandAdsPage(ctx) {
+            brandService.getAllBrands().then(function (categories) {
+                ctx.category = categories;
+                adsService.getAdsByBrand(ctx.params.name).then(function (data) {
+                    for (let ad of data) {
+                        ad.description = ad.description.substring(0, 15) + "...";
+                    }
+                    ctx.ads = data;
+                    let partialsObject = getCommonElements(ctx);
+                    partialsObject["content"] = './temp/home/index.hbs';
+                    ctx.loadPartials(partialsObject).then(function () {
+                        this.partial('./temp/common/main.hbs');
+                    })
+                });
+            }).catch(notifications.handleError)
+        }
 
         function handleDeleteComment(ctx) {
             let adsId = ctx.params.id;
@@ -215,10 +218,16 @@ $(() => {
         }
 
         function deleteBrand(ctx) {
-            let brandName = {"name": ctx.params.name};
-            brandService.deleteBrand(ctx.params.name).then(function (brandInfo) {
-                notifications.showInfo('Successfully deleted brand');
+           brandService.deleteBrand(ctx.params.name).then(function (brandInfo) {
+            adsService.getAdsByBrand(ctx.params.name.trim()).then(function (adsInfo) {
+                    let length = adsInfo.length;
+                    for (i = 0; i < length; i++) {
+                        adsService.removeAd((adsInfo[i]._id));
+                    }
+                    notifications.showInfo('Successfully deleted brand and Ands');
                 ctx.redirect('#/admin/brands');
+
+                });
             }).catch(notifications.handleError);
         }
 
@@ -495,7 +504,8 @@ $(() => {
                 return;
             }
             brandService.getAllBrands().then(function (data) {
-                ctx.category = data;
+
+                ctx.categories = data;
                 let partialsObject = getCommonElements(ctx);
                 partialsObject["createForm"] = './temp/ads/create/form.hbs';
                 partialsObject["content"] = './temp/ads/create/index.hbs';
@@ -509,7 +519,8 @@ $(() => {
         function handleCreateAd(ctx) {
             let title = ctx.params.title;
             let description = ctx.params.description;
-            let brand = $("#brand").find(":selected").text();
+            let brand = ctx.params.brand;
+            console.log(brand);
             let model = $("#model").find(":selected").text();
             let city = $("#city").find(":selected").text();
             let mileage = parseInt(ctx.params.mileage);
@@ -597,8 +608,6 @@ $(() => {
                     ctx.price = parseFloat(adInfo.price);
                     ctx.images = adInfo.images;
                     ctx.promoted = adInfo.promoted;
-                    console.log(ctx.promoted);
-
 
                     let partialsObject = getCommonElements(ctx);
                     partialsObject["editForm"] = './temp/ads/edit/form.hbs';
@@ -741,7 +750,6 @@ $(() => {
                                 message.avatar = sessionStorage.getItem('avatar');
                                 message.style = 'right';
                             } else {
-                                console.log(2225);
                                 let username = message.sender;
                                 auth.getUserInfo(username).then(function (userInfo) {
                                     message['avatar'] = userInfo[0].avatar;
@@ -750,11 +758,8 @@ $(() => {
                             }
                             message['time'] = calcTime(message._kmd.ect);
                             ctx.answer = answer;
-                            console.log(ctx.answer);
                         }
 
-
-                        console.log(111);
                         let partialsObject = getCommonElements(ctx);
                         partialsObject["content"] = './temp/messages/thread/index.hbs';
                         partialsObject["form"] = './temp/messages/thread/form.hbs';
@@ -822,11 +827,11 @@ $(() => {
 
         }
 
-        function stupedUser(ctx) {
-            auth.loginAsStupedUser(1, 2).then(function (data) {
-                sessionStorage.setItem('authtoken', data._kmd.authtoken);
-            });
-        }
+  //  function stupedUser(ctx) {
+  //        auth.loginAsStupedUser(1, 2).then(function (data) {
+  //            sessionStorage.setItem('authtoken', data._kmd.authtoken);
+  //        });
+  //    }
 
 
         function calcTime(dateIsoFormat) {
