@@ -24,6 +24,11 @@ let adsService = (() => {
         return requester.get('appdata', endpoint);
     }
 
+    function getAdsByBrand(brand) {
+        let endpoint = `ads?query={"brand":"${brand}"}`;
+        return requester.get('appdata', endpoint);
+    }
+
     function loadAdDetails(adId) {
         return requester.get('appdata', 'ads/' + adId);
     }
@@ -67,6 +72,7 @@ let adsService = (() => {
         createAd,
         getAds,
         getUserAds,
+        getAdsByBrand,
         loadAdDetails,
         edit,
         removeAd,

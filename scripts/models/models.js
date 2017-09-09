@@ -6,9 +6,17 @@ $(() => {
 
         brandService.getBrand(brandName).then(function (data) {
             let models = data[0].models;
+            $('#model').find("option").remove();
 
             for (let id in models) {
-                $('#model').append($(`<option value="1">${models[id]}</option>`));
+                $('#model').append($(`<option value="">${models[id]}</option>`));
+            }
+
+            console.log(models);
+            console.log(Object.keys(models).length);
+
+            if (Object.keys(models).length === 0) {
+                $('#model').append($(`<option selected value="">No models available.</option>`));
             }
         })
     }
