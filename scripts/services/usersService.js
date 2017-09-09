@@ -47,6 +47,13 @@ let auth = (() => {
         return requester.update('user', id, data)
     }
 
+    function checkUserNameAndPassword(username, password) {
+        let usernameRegex = /[A-z]{3}/g;
+        let passRegex = /[A-z\d]{6}/g;
+
+        return (usernameRegex.test(username) && passRegex.test(password));
+    }
+
     return {
         getUserInfo,
         saveSession,
@@ -57,6 +64,7 @@ let auth = (() => {
         editUser,
         banUser,
         unBanUser,
-        loginAsStupedUser
+        loginAsStupedUser,
+        checkUserNameAndPassword
     }
 })();

@@ -17,9 +17,8 @@ let brandService = (() => {
         return requester.get('appdata', endpoint);
     }
 
-    function deleteBrand(name) {
-        let endpoint = `brand?query={"name":"${name}"}`;
-        return requester.del('appdata', endpoint);
+    function deleteBrand(id) {
+        return requester.del('appdata', 'brand/' + id);
     }
 
     return {
