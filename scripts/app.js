@@ -94,14 +94,14 @@ $(() => {
 
         this.get('#/search/:query', displaySearch);
 
-        this.get('#/search/brand/:brand', displayBrandSearch);
+        this.get('#/search/brand/:query', displaySearch);
 
         function displaySearch(ctx) {
             let query = ctx.params.query;
 
             brandService.getAllBrands().then(function (categories) {
                 ctx.category = categories;
-                ctx.message = `Search results for: "${query}"`;
+                ctx.message = `Results for: "${query}"`;
 
                 adsService.getAds().then(function (data) {
                     data = data.filter(ad => ad.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
@@ -121,30 +121,6 @@ $(() => {
                 });
             }).catch(notifications.handleError)
         }
-
-        function displayBrandSearch(ctx) {
-            let brand = ctx.params.brand;
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-                ctx.message = `All advertisements for ${brand}`;
-
-                adsService.getAdsByBrand(brand).then(function (data) {
-                    for (let ad of data) {
-                        ad.description = ad.description.substring(0, 15) + "...";
-                    }
-
-                    ctx.ads = data;
-                    let partialsObject = utils.getCommonElements(ctx);
-                    partialsObject["content"] = './temp/home/index.hbs';
-                    partialsObject["ad"] = './temp/ads/ad.hbs';
-
-                    ctx.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
-                    })
-                });
-            });
-        }
-
 
         function calcTime(dateIsoFormat) {
             let diff = new Date - (new Date(dateIsoFormat));

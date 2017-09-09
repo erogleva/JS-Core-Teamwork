@@ -5,8 +5,17 @@
                 <h3 class="side-title">Brands</h3>
                 <ul class="list-unstyled">
                     {{#each category}}
-                    <li><a href="#/search/brand/{{name}}" title="">{{name}} <span class="badge pull-right">{{#if models}}
-                        Модели:{{len models}}{{/if}}</span></a>
+                        <li>
+                            <a href="#/search/brand/{{name}}" title="">{{name}}
+                                <span class="badge pull-right">
+                                    {{#if models}}
+                                        {{len models}}
+                                    {{else}}
+                                        0
+                                    {{/if}}
+                                </span>
+                            </a>
+                        </li>
                     {{/each}}
                 </ul>
             </div>
