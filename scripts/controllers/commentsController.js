@@ -1,24 +1,4 @@
-let commentsController = (()=>{
-    function displayCreateAdComment(ctx) {
-        let adId = ctx.params.id.substr(1);
-
-        adsService.loadAdDetails(adId).then(function (adInfo) {
-            ctx.id = adId;
-
-            let partialsObject = getCommonElements(ctx);
-            partialsObject["commentForm"] = './temp/ads/comments/form.hbs';
-            partialsObject["content"] = './temp/ads/comments/index.hbs';
-
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                });
-            })
-        });
-    }
-
+let commentsController = (() => {
     function handleDeleteComment(ctx) {
         let adsId = ctx.params.id;
         let commentId = ctx.params.ad_id;
@@ -40,7 +20,6 @@ let commentsController = (()=>{
     }
 
     return {
-        displayCreateAdComment,
         handleAdsComment,
         handleDeleteComment
     }

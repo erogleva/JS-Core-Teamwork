@@ -1,15 +1,71 @@
 let usersController = (() => {
+    function displayRegister(ctx) {
+        let templates = {
+            regForm: './temp/registration/form.hbs',
+            content: './temp/registration/index.hbs'
+        };
+        utils.loadPage(ctx, templates);
+    }
+
     function displayLogin(ctx) {
-        let partialsObject = utils.getCommonElements(ctx);
-        partialsObject["loginForm"] = './temp/login/form.hbs';
-        partialsObject["content"] = './temp/login/index.hbs';
+        let templates = {
+            loginForm: './temp/login/form.hbs',
+            content: './temp/login/index.hbs'
+        };
+        utils.loadPage(ctx, templates);
+    }
 
-        brandService.getAllBrands().then(function (categories) {
-            ctx.category = categories;
+    function displayUserProfile(ctx) {
+        let username = ctx.params.username;
 
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
+        if (auth.isAuthed()) {
+            ctx.loggedUsername = sessionStorage.getItem('username');
+        }
+
+        auth.getUserInfo(username).then(function (data) {
+            if (data.length === 0) {
+                return;
+            }
+
+            if (data[0]._id === sessionStorage.getItem('id')) {
+                ctx.isOwner = true;
+            }
+
+            ctx.data = data[0];
+
+            let templates = {
+                content: './temp/profile/index.hbs'
+            };
+            utils.loadPage(ctx, templates);
+        })
+    }
+
+    function displayEditUser(ctx) {
+        if (!auth.isAuthed()) {
+            ctx.redirect("#/home");
+            return;
+        }
+
+        let username = ctx.params.username;
+        ctx.loggedUsername = sessionStorage.getItem('username');
+
+        auth.getUserInfo(username).then(function (data) {
+            if (data[0]._id !== sessionStorage.getItem('id') && sessionStorage.getItem('userRole') !== 'admin') {
+                ctx.redirect('#/home');
+                return;
+            }
+
+            if (sessionStorage.getItem('userRole')) {
+                ctx.userRole = true;
+            }
+
+            ctx.data = data[0];
+
+            let templates = {
+                content: './temp/profile/edit/index.hbs',
+                editForm: './temp/profile/edit/form.hbs'
+            };
+            utils.loadPage(ctx, templates);
         })
     }
 
@@ -25,28 +81,14 @@ let usersController = (() => {
             }
             auth.saveSession(userInfo);
             auth.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
-                if (data[0].userRole) {
+                //if (data[0].userRole) {
                     sessionStorage.setItem('userRole', 'admin')
-                }
+                //}
 
                 notifications.showInfo('Login successful.');
                 ctx.redirect("#/home");
             });
         }).catch(notifications.handleError);
-    }
-
-    function displayRegister(ctx) {
-        let partialsObject = utils.getCommonElements(ctx);
-        partialsObject["regForm"] = './temp/registration/form.hbs';
-        partialsObject["content"] = './temp/registration/index.hbs';
-
-        brandService.getAllBrands().then(function (categories) {
-            ctx.category = categories;
-
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
-        })
     }
 
     function handleRegister(ctx) {
@@ -88,71 +130,6 @@ let usersController = (() => {
                 ctx.redirect("#/home");
             })
         }).catch(notifications.handleError);
-    }
-
-    function displayUserProfile(ctx) {
-        let username = ctx.params.username;
-
-        if (auth.isAuthed()) {
-            ctx.loggedUsername = sessionStorage.getItem('username');
-        }
-
-        auth.getUserInfo(username).then(function (data) {
-            if (data.length === 0) {
-                return;
-            }
-
-            if (data[0]._id === sessionStorage.getItem('id')) {
-                ctx.isOwner = true;
-            }
-
-            ctx.data = data[0];
-
-            let partialsObject = utils.getCommonElements(ctx);
-            partialsObject["content"] = './temp/profile/index.hbs';
-
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            })
-        })
-    }
-
-    function displayEditUser(ctx) {
-        if (!auth.isAuthed()) {
-            ctx.redirect("#/home");
-            return;
-        }
-
-        let username = ctx.params.username;
-        ctx.loggedUsername = sessionStorage.getItem('username');
-
-        auth.getUserInfo(username).then(function (data) {
-            if (data[0]._id !== sessionStorage.getItem('id') && sessionStorage.getItem('userRole') !== 'admin') {
-                ctx.redirect('#/home');
-                return;
-            }
-
-            if (sessionStorage.getItem('userRole')) {
-                ctx.userRole = true;
-            }
-
-            ctx.data = data[0];
-
-            let partialsObject = utils.getCommonElements(ctx);
-            partialsObject["editForm"] = './temp/profile/edit/form.hbs';
-            partialsObject["content"] = './temp/profile/edit/index.hbs';
-
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                })
-            })
-        })
     }
 
     function handleEditUser(ctx) {

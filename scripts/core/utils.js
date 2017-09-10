@@ -1,4 +1,26 @@
-let utils =(()=>{
+let utils = (() => {
+    const commonTemplates = {
+        'header': './temp/common/header.hbs',
+        'footer': './temp/common/footer.hbs',
+        'leftColumn': './temp/common/leftColumn.hbs'
+    };
+
+    function loadPage(ctx, templates) {
+        if (auth.isAuthed()) {
+            ctx.loggedUsername = sessionStorage.getItem('username');
+            ctx.userRole = sessionStorage.getItem('userRole');
+        }
+
+        brandService.getAllBrands()
+            .then(function (data) {
+                ctx.brands = data;
+                Object.assign(templates, commonTemplates);
+                ctx.loadPartials(templates).then(function () {
+                    this.partial(`./temp/common/main.hbs`);
+                });
+            }).catch(notifications.handleError);
+    }
+
     function getCommonElements(ctx) {
         if (auth.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
@@ -27,13 +49,13 @@ let utils =(()=>{
         return diff + ' year' + pluralize(diff);
 
         function pluralize(value) {
-            if (value !== 1) return 's';
-            else return '';
+            return value === 1 ? '' : 's';
         }
     }
 
     return {
         getCommonElements,
-        calcTime
+        calcTime,
+        loadPage
     }
 })();
