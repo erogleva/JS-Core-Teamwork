@@ -3,19 +3,14 @@
         <figcaption class="details">
             {{#if vipAd}}
                 <div class="top">
-                    <ul>
-                        <li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-                        <li><span class="converse">{{brand}} {{model}}</span></li>
-                        <li><a href="#"><i class="fa fa-shopping-basket" aria-hidden="true"></i>
-                        </a></li>
-                    </ul>
+                    <span class="converse">{{vipAd.brand}} {{vipAd.model}}</span>
                 </div>
                 <div class="middle">
-                    <img src="{{images}}" alt="{{title}}"/>
+                    <img src="{{vipAd.images}}" alt="{{vipAd.title}}"/>
                 </div>
                 <div class="bottom">
-                    <div class="price">{{price}} BGN</div>
-                    <a href="#/ads/details/{{_id}}" class="btn btn-md btn-primary"> Read More</a>
+                    <div class="price">{{vipAd.price}} BGN</div>
+                    <a href="#/ads/details/{{vipAd._id}}" class="btn btn-md btn-primary"> Click for details</a>
                 </div>
             {{/if}}
         </figcaption>
