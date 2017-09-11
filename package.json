@@ -2,15 +2,17 @@
   "name": "team",
   "version": "1.0.0",
   "description": "Final team work",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
   },
   "homepage": "https://github.com/erogleva/JS-Core-Teamwork#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "handlebars": "^4.0.10",
     "jquery": "3.2.1",
+    "lite-server": "^2.3.0",
     "sammy": "0.7.6"
   }
 }

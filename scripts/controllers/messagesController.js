@@ -1,4 +1,4 @@
-let messagesController = (()=>{
+let messagesController = (() => {
     function displayMessages(ctx) {
         if (!auth.isAuthed()) {
             ctx.redirect('#/home');
@@ -9,6 +9,7 @@ let messagesController = (()=>{
 
         msgService.getSentMessages().then(function (data) {
             for (let message of data) {
+                message.username = message.recipient;
                 if (message.title) {
                     message['time'] = utils.calcTime(message._kmd.ect);
                     allMessages.push(message);
@@ -17,6 +18,7 @@ let messagesController = (()=>{
 
             msgService.getReceivedMessages().then(function (data) {
                 for (let message of data) {
+                    message.username = message.sender;
                     if (message.title) {
                         message['time'] = utils.calcTime(message._kmd.ect);
                         allMessages.push(message);
@@ -33,17 +35,11 @@ let messagesController = (()=>{
 
                 ctx.data = allMessages;
 
-                let partialsObject = utils.getCommonElements(ctx);
-                partialsObject["content"] = './temp/messages/inbox/index.hbs';
-                partialsObject["message"] = './temp/messages/inbox/message.hbs';
-
-                brandService.getAllBrands().then(function (categories) {
-                    ctx.category = categories;
-
-                    ctx.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
-                    })
-                })
+                let templates = {
+                    content: './temp/messages/inbox/index.hbs',
+                    message: './temp/messages/inbox/message.hbs'
+                };
+                utils.loadPage(ctx, templates);
             });
         });
     }
@@ -51,48 +47,42 @@ let messagesController = (()=>{
     function displayMessageThread(ctx) {
         let id = ctx.params.id;
 
-        brandService.getAllBrands().then(function (brandInfo) {
-            ctx.category = brandInfo;
+        msgService.getSingleMessage(id).then(function (data) {
+            data[0]['time'] = utils.calcTime(data[0]._kmd.ect);
 
-            msgService.getSingleMessage(id).then(function (data) {
-                data[0]['time'] = utils.calcTime(data[0]._kmd.ect);
+            if (data[0].sender === sessionStorage.getItem('username')) {
+                data[0].style = 'right';
+                data[0].avatar = sessionStorage.getItem('avatar')
+            } else {
+                data[0].style = 'left';
+            }
 
-                if (data[0].sender === sessionStorage.getItem('username')) {
-                    data[0].style = 'right';
-                    data[0].avatar = sessionStorage.getItem('avatar')
-                } else {
-                    data[0].style = 'left';
-                }
+            ctx.data = data[0];
 
-                ctx.data = data[0];
+            msgService.findAnswer(id).then(function (answer) {
+                for (let message of answer) {
+                    if (message.sender === sessionStorage.getItem('username')) {
+                        message.avatar = sessionStorage.getItem('avatar');
+                        message.style = 'right';
+                    } else {
+                        let username = message.sender;
 
-                msgService.findAnswer(id).then(function (answer) {
-                    for (let message of answer) {
-                        if (message.sender === sessionStorage.getItem('username')) {
-                            message.avatar = sessionStorage.getItem('avatar');
-                            message.style = 'right';
-                        } else {
-                            let username = message.sender;
-
-                            auth.getUserInfo(username).then(function (userInfo) {
-                                message['avatar'] = userInfo[0].avatar;
-                                message.style = 'left';
-                            });
-                        }
-
-                        message['time'] = utils.calcTime(message._kmd.ect);
-                        ctx.answer = answer;
-                        console.log(ctx.answer);
+                        auth.getUserInfo(username).then(function (userInfo) {
+                            message['avatar'] = userInfo[0].avatar;
+                            message.style = 'left';
+                        });
                     }
 
-                    let partialsObject = utils.getCommonElements(ctx);
-                    partialsObject["content"] = './temp/messages/thread/index.hbs';
-                    partialsObject["form"] = './temp/messages/thread/form.hbs';
+                    message['time'] = utils.calcTime(message._kmd.ect);
+                    ctx.answer = answer;
+                    console.log(ctx.answer);
+                }
 
-                    ctx.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
-                    })
-                })
+                let templates = {
+                    content: './temp/messages/thread/index.hbs',
+                    form: './temp/messages/thread/form.hbs'
+                };
+                utils.loadPage(ctx, templates);
             })
         })
     }
@@ -100,17 +90,12 @@ let messagesController = (()=>{
     function displaySendMsg(ctx) {
         ctx.recipient = ctx.params.username;
 
-        let partialsObject = utils.getCommonElements(ctx);
-        partialsObject["content"] = './temp/messages/send/index.hbs';
-        partialsObject["form"] = './temp/messages/send/form.hbs';
+        let templates = {
+            content: './temp/messages/send/index.hbs',
+            form: './temp/messages/send/form.hbs'
+        };
 
-        brandService.getAllBrands().then(function (categories) {
-            ctx.category = categories;
-
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
-        })
+        utils.loadPage(ctx, templates);
     }
 
     function handleNewMessageThread(ctx) {

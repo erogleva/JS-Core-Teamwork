@@ -1,48 +1,15 @@
-let adsController = (()=>{
+let adsController = (() => {
     function displayCreateAd(ctx) {
         if (!auth.isAuthed()) {
             ctx.redirect("#/home");
             return;
         }
 
-        brandService.getAllBrands().then(function (data) {
-            ctx.category = data;
-            ctx.brands = data;
-            let partialsObject = utils.getCommonElements(ctx);
-            partialsObject["createForm"] = './temp/ads/create/form.hbs';
-            partialsObject["content"] = './temp/ads/create/index.hbs';
-
-            ctx.loadPartials(partialsObject).then(function () {
-                this.partial('./temp/common/main.hbs');
-            })
-        });
-    }
-
-    function handleCreateAd(ctx) {
-        let title = ctx.params.title;
-        let description = ctx.params.description;
-        let brand = ctx.params.brand;
-        let model = $("#model").find(":selected").text();
-        let city = $("#city").find(":selected").text();
-        let mileage = parseInt(ctx.params.mileage);
-        let price = parseFloat(ctx.params.price);
-        let images = ctx.params.images;
-
-        if (!images) {
-            images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
-        }
-
-        if (auth.isAuthed()) {
-            ctx.loggedUsername = sessionStorage.getItem('username');
-        }
-
-        let author = ctx.loggedUsername;
-        let promoted = false;
-        let publishedDate = new Date();
-
-        adsService.createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate).then(function () {
-            ctx.redirect("#/home");
-        })
+        let templates = {
+            createForm: './temp/ads/create/form.hbs',
+            content: './temp/ads/create/index.hbs'
+        };
+        utils.loadPage(ctx, templates);
     }
 
     function displayDetailsAd(context) {
@@ -80,18 +47,13 @@ let adsController = (()=>{
                     }
                 }
 
-                brandService.getAllBrands().then(function (data) {
-                    context.category = data;
+                let templates = {
+                    content: './temp/ads/details/index.hbs',
+                    comments: './temp/ads/details/comments/index.hbs',
+                    form: './temp/ads/details/comments/form.hbs'
+                };
 
-                    let partialsObject = utils.getCommonElements(context);
-                    partialsObject["content"] = './temp/ads/details/index.hbs';
-                    partialsObject["comments"] = './temp/ads/details/comments/index.hbs';
-                    partialsObject["form"] = './temp/ads/details/comments/form.hbs';
-
-                    context.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
-                    });
-                })
+                utils.loadPage(context, templates);
             })
         }).catch(notifications.handleError);
     }
@@ -114,18 +76,70 @@ let adsController = (()=>{
             ctx.promoted = adInfo.promoted;
             console.log(ctx.promoted);
 
-            let partialsObject = utils.getCommonElements(ctx);
-            partialsObject["editForm"] = './temp/ads/edit/form.hbs';
-            partialsObject["content"] = './temp/ads/edit/index.hbs';
+            let templates = {
+                editForm: './temp/ads/edit/form.hbs',
+                content: './temp/ads/edit/index.hbs'
+            };
 
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-                ctx.brands = categories;
+            utils.loadPage(ctx, templates)
+        });
+    }
 
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                });
-            })
+    function displayUserAds(ctx) {
+        let username = ctx.params.username;
+
+        adsService.getUserAds(username).then(function (ads) {
+            ctx.ads = ads;
+            ctx.username = ctx.params.username;
+            ctx.message = `${username}'s advertisements`;
+
+            let templates = {
+                content: './temp/home/index.hbs',
+                ad: './temp/ads/ad.hbs'
+            };
+
+            utils.loadPage(ctx, templates);
+        })
+    }
+
+    function displayAdsSearch(ctx) {
+        let query = ctx.params.query;
+        ctx.message = `Search results for: "${query}"`;
+
+        adsService.getAds().then(function (data) {
+            data = data.filter(
+                ad => ad.title.toLowerCase().match(query.toLowerCase()));
+
+            for (let ad of data) {
+                ad.description = ad.description.substring(0, 15) + "...";
+            }
+
+            ctx.ads = data;
+            let templates = {
+                content: './temp/home/index.hbs',
+                ad: './temp/ads/ad.hbs'
+            };
+
+            utils.loadPage(ctx, templates);
+        });
+    }
+
+    function displayAdsBrandSearch(ctx) {
+        let brand = ctx.params.brand;
+        ctx.message = `All advertisements for ${brand}`;
+
+        adsService.getAdsByBrand(brand).then(function (data) {
+            for (let ad of data) {
+                ad.description = ad.description.substring(0, 15) + "...";
+            }
+
+            ctx.ads = data;
+            let templates = {
+                content: './temp/home/index.hbs',
+                ad: './temp/ads/ad.hbs'
+            };
+
+            utils.loadPage(ctx, templates);
         });
     }
 
@@ -178,33 +192,40 @@ let adsController = (()=>{
         }).catch(notifications.handleError)
     }
 
-    function displayUserAds(ctx) {
-        let username = ctx.params.username;
+    function handleCreateAd(ctx) {
+        let title = ctx.params.title;
+        let description = ctx.params.description;
+        let brand = $("#brand").find(":selected").text();
+        let model = $("#model").find(":selected").text();
+        let city = $("#city").find(":selected").text();
+        let mileage = parseInt(ctx.params.mileage);
+        let price = parseFloat(ctx.params.price);
+        let images = ctx.params.images;
 
-        adsService.getUserAds(username).then(function (ads) {
-            ctx.ads = ads;
-            ctx.username = ctx.params.username;
-            ctx.message = `${username}'s advertisements`;
+        if (!images) {
+            images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
+        }
 
-            let partialsObject = utils.getCommonElements(ctx);
-            partialsObject["content"] = './temp/home/index.hbs';
-            partialsObject["ad"] = './temp/ads/ad.hbs';
+        if (auth.isAuthed()) {
+            ctx.loggedUsername = sessionStorage.getItem('username');
+        }
 
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
+        let author = ctx.loggedUsername;
+        let promoted = false;
+        let publishedDate = new Date();
 
-                ctx.loadPartials(partialsObject).then(function () {
-                    this.partial('./temp/common/main.hbs');
-                });
-            })
+        adsService.createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate).then(function () {
+            ctx.redirect("#/home");
         })
     }
 
-    return{
+    return {
         displayCreateAd,
         displayDetailsAd,
         displayEditAd,
         displayUserAds,
+        displayAdsSearch,
+        displayAdsBrandSearch,
         handleCreateAd,
         handleEditAd,
         handleDeleteAd

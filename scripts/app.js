@@ -48,6 +48,10 @@ $(() => {
 
         this.get('#/user/ads/:username', adsController.displayUserAds);
 
+        this.get('#/search/:query', adsController.displayAdsSearch);
+
+        this.get('#/search/brand/:brand', adsController.displayAdsBrandSearch);
+
         //messages
         this.get('#/user/messages', messagesController.displayMessages);
 
@@ -60,67 +64,36 @@ $(() => {
 
         this.post('#/message/send/:username', messagesController.handleNewMessageThread);
 
-        //admin
-        this.get('#/admin/brands', adminController.displayBrands);
+        //admin/brands
+        this.get('#/admin/brands', brandsController.displayBrands);
 
-        this.get('#/admin/brands/new', adminController.displayNewBrand);
+        this.get('#/admin/brands/new', brandsController.displayNewBrand);
 
-        this.post('#/admin/brands/new', adminController.handleNewBrand);
+        this.post('#/admin/brands/new', brandsController.handleNewBrand);
 
-        this.get('#/admin/brands/edit/:name', adminController.displayEditBrand);
+        this.get('#/admin/brands/edit/:name', brandsController.displayEditBrand);
 
-        this.post('#/admin/brands/edit/:brand', adminController.handleEditBrand);
+        this.post('#/admin/brands/edit/:brand', brandsController.handleEditBrand);
 
-        this.get('#/admin/brands/delete/:name', adminController.handleDeleteBrand);
+        this.get('#/admin/brands/delete/:name', brandsController.handleDeleteBrand);
 
-        this.get('#/admin/models', adminController.displayModels);
+        //admin/models
+        this.get('#/admin/models', modelsController.displayModels);
 
-        this.get('#/admin/models/delete/:brand/:name', adminController.handleDeleteModel);
+        this.get('#/admin/models/delete/:brand/:name', modelsController.handleDeleteModel);
 
-        this.get('#/admin/models/add/:name', adminController.displayAddModel);
+        this.get('#/admin/models/add/:name', modelsController.displayAddModel);
 
-        this.post('#/admin/models/add/:brand', adminController.handleAddModel);
+        this.post('#/admin/models/add/:brand', modelsController.handleAddModel);
 
-        this.get('#/admin/models/edit/:brand/:model', adminController.displayEditModel);
+        this.get('#/admin/models/edit/:brand/:model', modelsController.displayEditModel);
 
-        this.post('#/admin/models/edit/:brand/:model', adminController.handleEditModel);
+        this.post('#/admin/models/edit/:brand/:model', modelsController.handleEditModel);
 
         //comments
         this.post('#/ads/details/add/comments/:id', commentsController.handleAdsComment);
 
         this.get('#/ads/comments/delete/:id/:ad_id', commentsController.handleDeleteComment);
-
-        this.get('#/comment/:id', commentsController.displayCreateAdComment);
-
-        this.get('#/search/:query', displaySearch);
-
-        this.get('#/search/brand/:query', displaySearch);
-
-        function displaySearch(ctx) {
-            let query = ctx.params.query;
-
-            brandService.getAllBrands().then(function (categories) {
-                ctx.category = categories;
-                ctx.message = `Results for: "${query}"`;
-
-                adsService.getAds().then(function (data) {
-                    data = data.filter(ad => ad.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-
-                    for (let ad of data) {
-                        ad.description = ad.description.substring(0, 15) + "...";
-                    }
-
-                    ctx.ads = data;
-                    let partialsObject = utils.getCommonElements(ctx);
-                    partialsObject["content"] = './temp/home/index.hbs';
-                    partialsObject["ad"] = './temp/ads/ad.hbs';
-
-                    ctx.loadPartials(partialsObject).then(function () {
-                        this.partial('./temp/common/main.hbs');
-                    })
-                });
-            }).catch(notifications.handleError)
-        }
 
     });
 
