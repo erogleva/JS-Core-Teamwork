@@ -708,10 +708,9 @@ ul {
 
 
 .block {
-
     border-radius: 4px;
     width: 180px;
-    min-height: 430px;
+    min-height: 230px;
     background: #fff;
     padding: 23px;
     display: -webkit-box;
@@ -765,9 +764,7 @@ ul {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
+
 }
 .heading {
     font-size: 17px;
