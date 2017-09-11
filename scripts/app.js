@@ -6,7 +6,6 @@ $(() => {
 
         this.use('Handlebars', 'hbs');
 
-
         //home
         this.get('#/home', homeController.displayHome);
 
@@ -51,6 +50,8 @@ $(() => {
         this.get('#/search/:query', adsController.displayAdsSearch);
 
         this.get('#/search/brand/:brand', adsController.displayAdsBrandSearch);
+
+        this.get('#/makeVip/:id', adsController.makeVip);
 
         //messages
         this.get('#/user/messages', messagesController.displayMessages);

@@ -17,9 +17,15 @@
     {{#if isAuthor}}
         <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
         <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
-        <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
+    {{#if vip}}
+        <span class="btn btn-sm btn-warning">
+            <i class="glyphicon glyphicon-vip"></i> Your ads is Vip
+        </span>
+    {{else}}
+        <a href="#/makeVip/{{id}}" class="btn btn-sm btn-success">
             <i class="glyphicon glyphicon-vip"></i> Make VIP
         </a>
+    {{/if}}
     {{else if loggedUsername}}
         <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
             <i class="glyphicon glyphicon-envelope"></i> Send Message
