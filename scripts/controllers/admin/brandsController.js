@@ -1,6 +1,6 @@
 let brandsController = (() => {
     function displayBrands(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }
@@ -9,11 +9,12 @@ let brandsController = (() => {
             content: './temp/admin/brands/index.hbs',
             brand: './temp/admin/brands/brand.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
     function displayNewBrand(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }
@@ -21,19 +22,22 @@ let brandsController = (() => {
         let templates = {
             content: './temp/admin/brands/new.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
     function displayEditBrand(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }
 
         ctx.name = ctx.params.name;
+
         let templates = {
             content: './temp/admin/brands/edit.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 

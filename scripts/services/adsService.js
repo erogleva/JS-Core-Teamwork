@@ -29,16 +29,7 @@ let adsService = (() => {
         return requester.get('appdata', 'ads/' + adId);
     }
 
-    function getAdComments(adId) {
-        let endpoint = `comments?query={"ad_id":"${adId}"}`;
-        return requester.get('appdata', endpoint);
-    }
-
-    function addComment(adId, author, avatar, content) {
-        return requester.post('appdata', 'comments', {author, content, avatar, ad_id: adId});
-    }
-
-    function edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted, comments) {
+    function editAd(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted, comments) {
         let adData = {
             title: title,
             description: description,
@@ -53,6 +44,7 @@ let adsService = (() => {
             promoted: promoted,
             comments: comments
         };
+
         return requester.update('appdata', 'ads/' + adId, adData);
     }
 
@@ -65,21 +57,25 @@ let adsService = (() => {
         return requester.del('appdata', 'ads/' + adId);
     }
 
-    function removeComment(commentId) {
-        return requester.del('appdata', 'comments/' + commentId);
+    function getCounts() {
+        return requester.get('appdata', 'ads/_count');
+    }
+
+    function getRandomVipAds(num) {
+        let endpoint = `ads?query={"promoted":true}&limit=1&skip=${num}`;
+        console.log(endpoint);
+        return requester.get('appdata', endpoint);
     }
 
     return {
         createAd,
         getAds,
         getUserAds,
-        getAdsByBrand,
         loadAdDetails,
-        edit,
+        editAd,
         removeAd,
-        removeComment,
-        addComment,
-        getAdComments,
-        getAdsByBrand
+        getAdsByBrand,
+        getCounts,
+        getRandomVipAds
     }
 })();

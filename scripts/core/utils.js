@@ -2,27 +2,37 @@ let utils = (() => {
     const commonTemplates = {
         'header': './temp/common/header.hbs',
         'footer': './temp/common/footer.hbs',
-        'leftColumn': './temp/common/leftColumn.hbs'
+        'leftColumn': './temp/common/leftColumn.hbs',
+        'rightColumn': './temp/common/rightColumn.hbs'
     };
 
     function loadPage(ctx, templates) {
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }
 
-        brandService.getAllBrands()
-            .then(function (data) {
+        brandService.getAllBrands().then(function (data) {
                 ctx.brands = data;
-                Object.assign(templates, commonTemplates);
-                ctx.loadPartials(templates).then(function () {
-                    this.partial(`./temp/common/main.hbs`);
-                });
+                adsService.getCounts().then(function (data) {
+                   let randNum = Math.round(getRandom(0, data.count-1));
+                   console.log(randNum);
+                    adsService.getRandomVipAds(randNum)
+                       .then(function (vipAds) {
+                           ctx.vipAds = vipAds;
+                           console.log(vipAds);
+                           Object.assign(templates, commonTemplates);
+                           ctx.loadPartials(templates).then(function () {
+                               this.partial(`./temp/common/main.hbs`);
+                           });
+                       });
+                })
+
             }).catch(notifications.handleError);
     }
 
     function getCommonElements(ctx) {
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }
@@ -52,7 +62,9 @@ let utils = (() => {
             return value === 1 ? '' : 's';
         }
     }
-
+    function getRandom(min, max) {
+        return Math.random() * (max - min) + min;
+    }
     return {
         getCommonElements,
         calcTime,

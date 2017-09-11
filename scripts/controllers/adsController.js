@@ -1,6 +1,6 @@
 let adsController = (() => {
     function displayCreateAd(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect("#/home");
             return;
         }
@@ -9,11 +9,12 @@ let adsController = (() => {
             createForm: './temp/ads/create/form.hbs',
             content: './temp/ads/create/index.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
     function displayDetailsAd(context) {
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             context.loggedUsername = sessionStorage.getItem('username');
         }
 
@@ -38,7 +39,7 @@ let adsController = (() => {
                 context.isAuthor = true;
             }
 
-            adsService.getAdComments(adId).then(function (comments) {
+            commentsService.getAdComments(adId).then(function (comments) {
                 context.comments = comments;
 
                 for (let comment of context.comments) {
@@ -154,7 +155,6 @@ let adsController = (() => {
         let mileage = parseInt(ctx.params.mileage);
         let price = parseFloat(ctx.params.price);
         let publishedDate = new Date();
-
         let images = ctx.params.images;
 
         adsService.loadAdDetails(adId).then(function (adInfo) {
@@ -170,16 +170,21 @@ let adsController = (() => {
                 ctx.promoted = false;
             }
 
-            if (auth.isAuthed()) {
+            if (usersService.isAuthed()) {
                 ctx.loggedUsername = sessionStorage.getItem('username');
             }
 
-            let author = ctx.loggedUsername;
+            let authorId = adInfo._acl.creator;
 
-            adsService.edit(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted).then(function (adInfo) {
-                notifications.showInfo('Ad is updated');
-                ctx.redirect(`#/ads/details/${adId}`);
-            }).catch(auth.handleError);
+            usersService.getUserById(authorId).then(function (data) {
+                let user = data[0];
+                let author = user.username;
+
+                adsService.editAd(adId, title, description, brand, model, city, mileage, price, images, publishedDate, author, promoted).then(function (adInfo) {
+                    notifications.showInfo('Ad is updated');
+                    ctx.redirect(`#/ads/details/${adId}`);
+                }).catch(usersService.handleError);
+            });
         })
     }
 
@@ -206,7 +211,7 @@ let adsController = (() => {
             images = "https://www.vipspatel.com/wp-content/uploads/2017/04/no_image_available_300x300.jpg";
         }
 
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
         }
 
@@ -220,23 +225,20 @@ let adsController = (() => {
     }
 
     function makeVip(ctx) {
-        auth.getUserInfo(sessionStorage.getItem('username'))
-            .then(function(userInfo){
-                if(userInfo[0].points > 0) {
-                    adsService.loadAdDetails(ctx.params.id)
-                        .then(function (adsInfo) {
-                            adsInfo.promoted = true;
-                           adsService.edit(adsInfo._id, adsInfo.title, adsInfo.description, adsInfo.brand, adsInfo.model, adsInfo.city, adsInfo.mileage, adsInfo.price, adsInfo.images, adsInfo.publishedDate, adsInfo.author, adsInfo.promoted, adsInfo.comments);
-                           notifications.showInfo('Successful promotion of the ad');
-                            ctx.redirect(`#/ads/details/${adsInfo._id}`)
-                        })
-                } else {
-                    notifications.handleError('You do not have the required number of credits');
-                    ctx.redirect(`#/ads/details/${ctx.params.id}`);
-                }
+        usersService.getUserInfo(sessionStorage.getItem('username')).then(function (userInfo) {
+            if (userInfo[0].points > 0) {
+                adsService.loadAdDetails(ctx.params.id).then(function (adsInfo) {
+                    adsInfo.promoted = true;
 
-            })
-
+                    adsService.editAd(adsInfo._id, adsInfo.title, adsInfo.description, adsInfo.brand, adsInfo.model, adsInfo.city, adsInfo.mileage, adsInfo.price, adsInfo.images, adsInfo.publishedDate, adsInfo.author, adsInfo.promoted, adsInfo.comments);
+                    notifications.showInfo('Successful promotion of the ad.');
+                    ctx.redirect(`#/ads/details/${adsInfo._id}`)
+                })
+            } else {
+                notifications.handleError('You do not have the required number of credits');
+                ctx.redirect(`#/ads/details/${ctx.params.id}`);
+            }
+        })
     }
 
     return {

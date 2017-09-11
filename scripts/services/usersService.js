@@ -1,4 +1,4 @@
-let auth = (() => {
+let usersService = (() => {
     function isAuthed() {
         return sessionStorage.getItem('authtoken') !== null &&
             sessionStorage.getItem('username') !== 'stupeduser';
@@ -35,6 +35,10 @@ let auth = (() => {
         return requester.get('user', `?query={"username":"${username}"}`);
     }
 
+    function getUserById(id) {
+        return requester.get('user', `?query={"_id":"${id}"}`);
+    }
+
     function editUser(id, username, avatar, email, phone, fName, lName, points, userRole) {
         return requester.update('user', id, {username, avatar, email, phone, fName, lName, points, userRole})
     }
@@ -56,6 +60,7 @@ let auth = (() => {
 
     return {
         getUserInfo,
+        getUserById,
         saveSession,
         login,
         register,

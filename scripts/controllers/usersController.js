@@ -4,6 +4,7 @@ let usersController = (() => {
             regForm: './temp/registration/form.hbs',
             content: './temp/registration/index.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
@@ -12,17 +13,18 @@ let usersController = (() => {
             loginForm: './temp/login/form.hbs',
             content: './temp/login/index.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
     function displayUserProfile(ctx) {
         let username = ctx.params.username;
 
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
         }
 
-        auth.getUserInfo(username).then(function (data) {
+        usersService.getUserInfo(username).then(function (data) {
             if (data.length === 0) {
                 return;
             }
@@ -36,12 +38,13 @@ let usersController = (() => {
             let templates = {
                 content: './temp/profile/index.hbs'
             };
+
             utils.loadPage(ctx, templates);
         })
     }
 
     function displayEditUser(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect("#/home");
             return;
         }
@@ -49,7 +52,7 @@ let usersController = (() => {
         let username = ctx.params.username;
         ctx.loggedUsername = sessionStorage.getItem('username');
 
-        auth.getUserInfo(username).then(function (data) {
+        usersService.getUserInfo(username).then(function (data) {
             if (data[0]._id !== sessionStorage.getItem('id') && sessionStorage.getItem('userRole') !== 'admin') {
                 ctx.redirect('#/home');
                 return;
@@ -65,6 +68,7 @@ let usersController = (() => {
                 content: './temp/profile/edit/index.hbs',
                 editForm: './temp/profile/edit/form.hbs'
             };
+
             utils.loadPage(ctx, templates);
         })
     }
@@ -73,14 +77,15 @@ let usersController = (() => {
         let username = ctx.params.username;
         let password = ctx.params.passwd;
 
-        auth.login(username, password).then(function (userInfo) {
+        usersService.login(username, password).then(function (userInfo) {
             if (userInfo.isBlocked === 'true') {
                 notifications.showInfo('You are blocked');
                 ctx.redirect('#/home');
                 return;
             }
-            auth.saveSession(userInfo);
-            auth.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
+
+            usersService.saveSession(userInfo);
+            usersService.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
                 if (data[0].userRole) {
                     sessionStorage.setItem('userRole', 'admin')
                 }
@@ -110,10 +115,10 @@ let usersController = (() => {
             return;
         }
 
-        if (auth.checkUserNameAndPassword(username, password)) {
-            auth.register(username, password, avatar, email, phone, fName, lName).then(function (userInfo) {
+        if (usersService.checkUserNameAndPassword(username, password)) {
+            usersService.register(username, password, avatar, email, phone, fName, lName).then(function (userInfo) {
                 notifications.showInfo('User registration successful.');
-                auth.saveSession(userInfo);
+                usersService.saveSession(userInfo);
                 ctx.redirect("#/home");
             }).catch(notifications.handleError);
         } else {
@@ -122,10 +127,10 @@ let usersController = (() => {
     }
 
     function handleLogout(ctx) {
-        auth.logout().then(function () {
+        usersService.logout().then(function () {
             sessionStorage.clear();
-            auth.loginAsStupedUser().then(function (data) {
-                auth.saveSession(data);
+            usersService.loginAsStupedUser().then(function (data) {
+                usersService.saveSession(data);
                 notifications.showInfo('Logout successful.');
                 ctx.redirect("#/home");
             })
@@ -138,18 +143,18 @@ let usersController = (() => {
         let lName = ctx.params.lastName;
         let phone = ctx.params.phone;
 
-        auth.getUserInfo(ctx.params.username).then(function (data) {
+        usersService.getUserInfo(ctx.params.username).then(function (data) {
             let points = data[0].points;
 
             if (ctx.params.points) {
                 points = ctx.params.points;
             }
 
-            auth.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, points, data[0].userRole).then(function (userInfo) {
+            usersService.editUser(data[0]._id, data[0].username, avatar, data[0].email, phone, fName, lName, points, data[0].userRole).then(function (userInfo) {
                 notifications.showInfo('Successfully edited.');
 
                 if (sessionStorage.getItem('userRole') !== 'admin') {
-                    auth.saveSession(userInfo);
+                    usersService.saveSession(userInfo);
                 }
 
                 ctx.redirect(`#/user/details/${data[0].username}`);
@@ -160,10 +165,10 @@ let usersController = (() => {
     function handleBanUser(ctx) {
         let username = ctx.params.username;
 
-        auth.getUserInfo(username).then(function (userInfo) {
+        usersService.getUserInfo(username).then(function (userInfo) {
             userInfo[0].isBlocked = 'true';
 
-            auth.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
+            usersService.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
                 ctx.redirect(`#/user/details/${userInfo[0].username}`);
             })
         }).catch(notifications.handleError)
@@ -172,10 +177,10 @@ let usersController = (() => {
     function handleUnbanUser(ctx) {
         let username = ctx.params.username;
 
-        auth.getUserInfo(username).then(function (userInfo) {
+        usersService.getUserInfo(username).then(function (userInfo) {
             userInfo[0].isBlocked = '';
 
-            auth.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
+            usersService.banUser(userInfo[0]._id, userInfo[0]).then(function (data) {
                 notifications.showInfo(username + ' is active again');
                 ctx.redirect(`#/user/details/${userInfo[0].username}`);
             })
