@@ -1,17 +1,7 @@
 <legend>{{message}}</legend>
 {{#if ads}}
     {{#each ads}}
-        <figure class="snip1492">
-            <img src="{{images}}"/>
-            <figcaption>
-                <h3>{{title}}</h3>
-                <p>{{description}}</p>
-                <div class="price">
-                    {{price}} BGN
-                </div>
-            </figcaption>
-            <a href="#/ads/details/{{_id}}" style="color: white;">Click for details</a>
-        </figure>
+        {{> ad}}
     {{/each}}
 {{else}}
     No Ads

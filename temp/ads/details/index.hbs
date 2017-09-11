@@ -1,37 +1,59 @@
-<figure class="snip1492-details">
-    <figcaption class="details">
-        <h3>{{title}}</h3><br/>
-        <p>Brand: {{brand}}</p>
-        <p>Model: {{model}}</p>
-        <p>City: {{city}}</p>
-        <p>Mileage: {{mileage}}</p>
-        <div class="price">
-            {{price}} BGN
-        </div>
-        <br/>
-        <img class="details-image" src="{{images}}" width="350">
-        <p>{{description}}</p>
-        <p>Owner: {{author}}</p>
-        <p>Published: {{publishedDate}} ago</p>
-    </figcaption>
-    {{#if isAuthor}}
-        <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a></button>
-        <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a></button>
-    {{#if vip}}
-        <span class="btn btn-sm btn-warning">
-            <i class="glyphicon glyphicon-vip"></i> Your Ad is VIP
-        </span>
-    {{else}}
-        <a href="#/makeVip/{{id}}" class="btn btn-sm btn-success">
-            <i class="glyphicon glyphicon-vip"></i> Make VIP
-        </a>
-    {{/if}}
-    {{else if loggedUsername}}
-        <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
-            <i class="glyphicon glyphicon-envelope"></i> Send Message
-        </a>
-    {{/if}}
-</figure>
+<div align="left" class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{title}}</h3>
+    </div>
+    <div class="panel-body">
+        <figure class="snip1492-details">
+            <figcaption class="details">
+                <div class="col-md-6">
+                    <p>Brand: {{brand}}</p>
+                    <p>Model: {{model}}</p>
+                    <p>City: {{city}}</p>
+                    <p>Mileage: {{mileage}}</p>
+                    <p>Owner: <a href="#/user/details/{{author}}">{{author}}</a></p>
+                    <p>Price: {{price}} BGN</p>
+                    <p>Published: {{publishedDate}} ago</p>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{images}}"><img alt="Ad Image" src="{{images}}" class="img-responsive"></a>
+                </div>
+                <div class="col-md-12" style="margin-bottom: 15px">
+                    {{#if isAuthor}}
+                        <button type="button" class="btn btn-secondary"><a href="#/edit/:{{id}}">Edit</a>
+                        </button>
+                        <button type="button" class="btn btn-secondary"><a href="#/delete/:{{id}}">Delete</a>
+                        </button>
+                        {{#if vip}}
+                            <span class="btn btn-warning">
+                                    <i class="glyphicon glyphicon-vip"></i> Your Ad is VIP
+                                </span>
+                        {{else}}
+                            <a href="#/makeVip/{{id}}" class="btn btn-success">
+                                <i class="glyphicon glyphicon-vip"></i> Make VIP
+                            </a>
+                        {{/if}}
+                    {{else if loggedUsername}}
+                        <a href="#/message/send/{{author}}" class="btn btn-sm btn-success">
+                            <i class="glyphicon glyphicon-envelope"></i> Send Message
+                        </a>
+                    {{/if}}
+                </div>
+            </figcaption>
+        </figure>
+    </div>
+</div>
+<div align="left" class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Description</h3>
+    </div>
+    <div class="panel-body" style="margin: 15px">
+        {{#if description}}
+            {{description}}
+        {{else}}
+            No description
+        {{/if}}
+    </div>
+</div>
 {{>comments}}
 <div class="message_write">
     {{> form}}

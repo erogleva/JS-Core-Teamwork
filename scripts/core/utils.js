@@ -13,23 +13,24 @@ let utils = (() => {
         }
 
         brandService.getAllBrands().then(function (data) {
-                ctx.brands = data;
-                adsService.getCounts().then(function (data) {
-                   let randNum = Math.round(getRandom(0, data.count-1));
-                   console.log(randNum);
-                    adsService.getRandomVipAds(randNum)
-                       .then(function (vipAds) {
-                           ctx.vipAds = vipAds;
-                           console.log(vipAds);
-                           Object.assign(templates, commonTemplates);
-                           ctx.loadPartials(templates).then(function () {
-                               this.partial(`./temp/common/main.hbs`);
-                           });
-                       });
-                })
+            ctx.brands = data;
+            adsService.getCounts().then(function (data) {
+                let randNum = Math.round(getRandom(0, data.count - 1));
+                console.log(randNum);
+                adsService.getRandomVipAds(randNum)
+                    .then(function (vipAds) {
+                        ctx.vipAds = vipAds;
+                        console.log(vipAds);
+                        Object.assign(templates, commonTemplates);
+                        ctx.loadPartials(templates).then(function () {
+                            this.partial(`./temp/common/main.hbs`);
+                        });
+                    });
+            })
 
-            }).catch(notifications.handleError);
+        }).catch(notifications.handleError);
     }
+
 
     function getCommonElements(ctx) {
         if (usersService.isAuthed()) {
@@ -42,6 +43,10 @@ let utils = (() => {
             'footer': './temp/common/footer.hbs',
             'leftColumn': './temp/common/leftColumn.hbs'
         }
+    }
+
+    function getCities() {
+        return ["Sofia", "Varna", "Plovdiv", "Ruse"];
     }
 
     function calcTime(dateIsoFormat) {
@@ -68,6 +73,7 @@ let utils = (() => {
     return {
         getCommonElements,
         calcTime,
+        getCities,
         loadPage
     }
 })();
