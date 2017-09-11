@@ -32,6 +32,7 @@ let adsController = (() => {
             context.mileage = parseInt(adInfo.mileage);
             context.price = parseFloat(adInfo.price);
             context.images = adInfo.images;
+            context.vip = adInfo.promoted;
 
             if (context.author === context.loggedUsername ||
                 sessionStorage.getItem('userRole')) {
@@ -191,7 +192,6 @@ let adsController = (() => {
         let adId = ctx.params.id.substr(1);
 
         adsService.removeAd(adId).then(function (adInfo) {
-            console.log(adInfo);
             notifications.showInfo(`Your ad is deleted.`);
             ctx.redirect('#/home')
         }).catch(notifications.handleError)
@@ -224,6 +224,23 @@ let adsController = (() => {
         })
     }
 
+    function makeVip(ctx) {
+        usersService.getUserInfo(sessionStorage.getItem('username')).then(function (userInfo) {
+            if (userInfo[0].points > 0) {
+                adsService.loadAdDetails(ctx.params.id).then(function (adsInfo) {
+                    adsInfo.promoted = true;
+
+                    adsService.editAd(adsInfo._id, adsInfo.title, adsInfo.description, adsInfo.brand, adsInfo.model, adsInfo.city, adsInfo.mileage, adsInfo.price, adsInfo.images, adsInfo.publishedDate, adsInfo.author, adsInfo.promoted, adsInfo.comments);
+                    notifications.showInfo('Successful promotion of the ad.');
+                    ctx.redirect(`#/ads/details/${adsInfo._id}`)
+                })
+            } else {
+                notifications.handleError('You do not have the required number of credits');
+                ctx.redirect(`#/ads/details/${ctx.params.id}`);
+            }
+        })
+    }
+
     return {
         displayCreateAd,
         displayDetailsAd,
@@ -233,6 +250,7 @@ let adsController = (() => {
         displayAdsBrandSearch,
         handleCreateAd,
         handleEditAd,
-        handleDeleteAd
+        handleDeleteAd,
+        makeVip
     }
 })();

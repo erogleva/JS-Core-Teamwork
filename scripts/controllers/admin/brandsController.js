@@ -9,6 +9,7 @@ let brandsController = (() => {
             content: './temp/admin/brands/index.hbs',
             brand: './temp/admin/brands/brand.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
@@ -21,6 +22,7 @@ let brandsController = (() => {
         let templates = {
             content: './temp/admin/brands/new.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
@@ -31,9 +33,11 @@ let brandsController = (() => {
         }
 
         ctx.name = ctx.params.name;
+
         let templates = {
             content: './temp/admin/brands/edit.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 

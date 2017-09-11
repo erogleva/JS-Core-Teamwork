@@ -51,6 +51,8 @@ $(() => {
 
         this.get('#/search/brand/:brand', adsController.displayAdsBrandSearch);
 
+        this.get('#/makeVip/:id', adsController.makeVip);
+
         //Messages
         this.get('#/user/messages', messagesController.displayMessages);
 

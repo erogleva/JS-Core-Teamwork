@@ -14,6 +14,7 @@ let modelsController = (() => {
             regForm: './temp/registration/form.hbs',
             content: './temp/admin/models/add.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
@@ -24,6 +25,7 @@ let modelsController = (() => {
         let templates = {
             content: './temp/admin/models/edit.hbs'
         };
+
         utils.loadPage(ctx, templates);
     }
 
