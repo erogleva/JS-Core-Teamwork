@@ -14,21 +14,19 @@ let utils = (() => {
 
         brandService.getAllBrands().then(function (data) {
             ctx.brands = data;
-            adsService.getCounts().then(function (data) {
-                let randNum = Math.round(getRandom(0, data.count - 1));
-                console.log(randNum);
-                adsService.getRandomVipAds(randNum)
-                    .then(function (vipAds) {
-                        ctx.vipAds = vipAds;
-                        console.log(vipAds);
-                        Object.assign(templates, commonTemplates);
-                        ctx.loadPartials(templates).then(function () {
-                            this.partial(`./temp/common/main.hbs`);
-                        });
-                    });
-            })
 
-        }).catch(notifications.handleError);
+            adsService.getVipAds().then(function (vipAds) {
+                let vipAdsCount = vipAds.length;
+                let randomVipAdIndex = Math.round(getRandom(0, vipAdsCount - 1));
+
+                ctx.vipAd = vipAds[randomVipAdIndex];
+                Object.assign(templates, commonTemplates);
+
+                ctx.loadPartials(templates).then(function () {
+                    this.partial(`./temp/common/main.hbs`);
+                });
+            });
+        });
     }
 
 
@@ -67,13 +65,16 @@ let utils = (() => {
             return value === 1 ? '' : 's';
         }
     }
+
     function getRandom(min, max) {
         return Math.random() * (max - min) + min;
     }
+
     return {
         getCommonElements,
         calcTime,
         getCities,
         loadPage
     }
-})();
+})
+();

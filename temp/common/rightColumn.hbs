@@ -1,27 +1,23 @@
-{{#if vipAds}}
-    {{#each vipAds}}
-<div class="block">
-    <div class="top">
-        <ul>
-            <li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-            <li><span class="converse">{{brand}}</span></li>
-            <li><a href="#"><i class="fa fa-shopping-basket" aria-hidden="true"></i>
-            </a></li>
-        </ul>
-    </div>
-
-    <div class="middle">
-        <img src="{{images}}" alt="{{title}}" />
-    </div>
-
-    <div class="bottom">
-        <div class="heading">{{title}}</div>
-        <div class="info">{{description}}</div>
-        <div class="style">City {{city}}</div>
-        <div class="price">Price {{price}} BGN</div>
-
-    <a href="#/ads/details/{{_id}}" class="btn btn-sm btn-primary"> Read More</a>
+<div class="panel panel-info">
+    <figure class="snip1492-details">
+        <figcaption class="details">
+            {{#if vipAd}}
+                <div class="top">
+                    <ul>
+                        <li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+                        <li><span class="converse">{{brand}} {{model}}</span></li>
+                        <li><a href="#"><i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                        </a></li>
+                    </ul>
+                </div>
+                <div class="middle">
+                    <img src="{{images}}" alt="{{title}}"/>
+                </div>
+                <div class="bottom">
+                    <div class="price">{{price}} BGN</div>
+                    <a href="#/ads/details/{{_id}}" class="btn btn-md btn-primary"> Read More</a>
+                </div>
+            {{/if}}
+        </figcaption>
+    </figure>
 </div>
-</div>
-{{/each}}
-{{/if}}

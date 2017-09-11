@@ -12,9 +12,6 @@ $(() => {
                 $('#model').append($(`<option value="">${models[id]}</option>`));
             }
 
-            console.log(models);
-            console.log(Object.keys(models).length);
-
             if (Object.keys(models).length === 0) {
                 $('#model').append($(`<option selected value="">No models available.</option>`));
             }

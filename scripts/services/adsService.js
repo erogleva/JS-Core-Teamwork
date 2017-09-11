@@ -57,13 +57,8 @@ let adsService = (() => {
         return requester.del('appdata', 'ads/' + adId);
     }
 
-    function getCounts() {
-        return requester.get('appdata', 'ads/_count');
-    }
-
-    function getRandomVipAds(num) {
-        let endpoint = `ads?query={"promoted":true}&limit=1&skip=${num}`;
-        console.log(endpoint);
+    function getVipAds() {
+        let endpoint = `ads?query={"promoted":true}`;
         return requester.get('appdata', endpoint);
     }
 
@@ -75,7 +70,6 @@ let adsService = (() => {
         editAd,
         removeAd,
         getAdsByBrand,
-        getCounts,
-        getRandomVipAds
+        getVipAds
     }
 })();
