@@ -1,6 +1,6 @@
 let brandsController = (() => {
     function displayBrands(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }
@@ -13,7 +13,7 @@ let brandsController = (() => {
     }
 
     function displayNewBrand(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }
@@ -25,7 +25,7 @@ let brandsController = (() => {
     }
 
     function displayEditBrand(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/login');
             return;
         }

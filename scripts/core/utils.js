@@ -6,15 +6,15 @@ let utils = (() => {
     };
 
     function loadPage(ctx, templates) {
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }
 
-        brandService.getAllBrands()
-            .then(function (data) {
+        brandService.getAllBrands().then(function (data) {
                 ctx.brands = data;
                 Object.assign(templates, commonTemplates);
+
                 ctx.loadPartials(templates).then(function () {
                     this.partial(`./temp/common/main.hbs`);
                 });
@@ -22,7 +22,7 @@ let utils = (() => {
     }
 
     function getCommonElements(ctx) {
-        if (auth.isAuthed()) {
+        if (usersService.isAuthed()) {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }

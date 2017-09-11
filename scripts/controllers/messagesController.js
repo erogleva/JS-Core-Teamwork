@@ -1,6 +1,6 @@
 let messagesController = (() => {
     function displayMessages(ctx) {
-        if (!auth.isAuthed()) {
+        if (!usersService.isAuthed()) {
             ctx.redirect('#/home');
             return;
         }
@@ -10,6 +10,7 @@ let messagesController = (() => {
         msgService.getSentMessages().then(function (data) {
             for (let message of data) {
                 message.username = message.recipient;
+
                 if (message.title) {
                     message['time'] = utils.calcTime(message._kmd.ect);
                     allMessages.push(message);
@@ -19,6 +20,7 @@ let messagesController = (() => {
             msgService.getReceivedMessages().then(function (data) {
                 for (let message of data) {
                     message.username = message.sender;
+
                     if (message.title) {
                         message['time'] = utils.calcTime(message._kmd.ect);
                         allMessages.push(message);
@@ -39,6 +41,7 @@ let messagesController = (() => {
                     content: './temp/messages/inbox/index.hbs',
                     message: './temp/messages/inbox/message.hbs'
                 };
+
                 utils.loadPage(ctx, templates);
             });
         });
@@ -67,7 +70,7 @@ let messagesController = (() => {
                     } else {
                         let username = message.sender;
 
-                        auth.getUserInfo(username).then(function (userInfo) {
+                        usersService.getUserInfo(username).then(function (userInfo) {
                             message['avatar'] = userInfo[0].avatar;
                             message.style = 'left';
                         });
@@ -82,6 +85,7 @@ let messagesController = (() => {
                     content: './temp/messages/thread/index.hbs',
                     form: './temp/messages/thread/form.hbs'
                 };
+
                 utils.loadPage(ctx, templates);
             })
         })

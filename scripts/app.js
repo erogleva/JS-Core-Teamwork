@@ -6,13 +6,12 @@ $(() => {
 
         this.use('Handlebars', 'hbs');
 
-
-        //home
+        //Home
         this.get('#/home', homeController.displayHome);
 
         this.get('index.html', homeController.displayHome);
 
-        //users
+        //Users
         this.get('#/login', usersController.displayLogin);
 
         this.post('#/login', usersController.handleLogin);
@@ -33,7 +32,7 @@ $(() => {
 
         this.get('#/user/unban/:username', usersController.handleUnbanUser);
 
-        //ads
+        //Ads
         this.get('#/create', adsController.displayCreateAd);
 
         this.post('#/create', adsController.handleCreateAd);
@@ -52,11 +51,10 @@ $(() => {
 
         this.get('#/search/brand/:brand', adsController.displayAdsBrandSearch);
 
-        //messages
+        //Messages
         this.get('#/user/messages', messagesController.displayMessages);
 
         this.get('#/user/message/:id', messagesController.displayMessageThread);
-
 
         this.post('#/user/message/:id', messagesController.handleSendMessageInThread);
 
@@ -64,7 +62,7 @@ $(() => {
 
         this.post('#/message/send/:username', messagesController.handleNewMessageThread);
 
-        //admin/brands
+        //Brands
         this.get('#/admin/brands', brandsController.displayBrands);
 
         this.get('#/admin/brands/new', brandsController.displayNewBrand);
@@ -77,7 +75,7 @@ $(() => {
 
         this.get('#/admin/brands/delete/:name', brandsController.handleDeleteBrand);
 
-        //admin/models
+        //Models
         this.get('#/admin/models', modelsController.displayModels);
 
         this.get('#/admin/models/delete/:brand/:name', modelsController.handleDeleteModel);
@@ -90,15 +88,19 @@ $(() => {
 
         this.post('#/admin/models/edit/:brand/:model', modelsController.handleEditModel);
 
-        //comments
+        //Comments
         this.post('#/ads/details/add/comments/:id', commentsController.handleAdsComment);
 
-        this.get('#/ads/comments/delete/:id/:ad_id', commentsController.handleDeleteComment);
+        this.get('#/ads/comments/edit/:ad_id/:id', commentsController.displayEditComment);
+
+        this.post('#/ads/comments/edit/:ad_id/:id', commentsController.handleEditComment);
+
+        this.get('#/ads/comments/delete/:ad_id/:id', commentsController.handleDeleteComment);
     });
 
     function start() {
-        auth.loginAsStupedUser().then(function (data) {
-            auth.saveSession(data);
+        usersService.loginAsStupedUser().then(function (data) {
+            usersService.saveSession(data);
             app.run();
         })
     }
