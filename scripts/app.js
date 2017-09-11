@@ -6,6 +6,7 @@ $(() => {
 
         this.use('Handlebars', 'hbs');
 
+
         //home
         this.get('#/home', homeController.displayHome);
 
@@ -55,6 +56,7 @@ $(() => {
         this.get('#/user/messages', messagesController.displayMessages);
 
         this.get('#/user/message/:id', messagesController.displayMessageThread);
+
 
         this.post('#/user/message/:id', messagesController.handleSendMessageInThread);
 
