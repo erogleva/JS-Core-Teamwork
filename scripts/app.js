@@ -7,6 +7,7 @@ $(() => {
         this.use('Handlebars', 'hbs');
 
         //home
+
         this.get('#/home', homeController.displayHome);
 
         this.get('index.html', homeController.displayHome);
