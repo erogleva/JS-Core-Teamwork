@@ -10,6 +10,8 @@ let adsController = (() => {
             content: './temp/ads/create/index.hbs'
         };
 
+        ctx.cities = utils.getCities();
+
         utils.loadPage(ctx, templates);
     }
 
@@ -76,7 +78,7 @@ let adsController = (() => {
             ctx.price = parseFloat(adInfo.price);
             ctx.images = adInfo.images;
             ctx.promoted = adInfo.promoted;
-            console.log(ctx.promoted);
+            ctx.cities = utils.getCities();
 
             let templates = {
                 editForm: './temp/ads/edit/form.hbs',

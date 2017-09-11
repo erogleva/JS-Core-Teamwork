@@ -12,13 +12,13 @@ let utils = (() => {
         }
 
         brandService.getAllBrands().then(function (data) {
-                ctx.brands = data;
-                Object.assign(templates, commonTemplates);
+            ctx.brands = data;
+            Object.assign(templates, commonTemplates);
 
-                ctx.loadPartials(templates).then(function () {
-                    this.partial(`./temp/common/main.hbs`);
-                });
-            }).catch(notifications.handleError);
+            ctx.loadPartials(templates).then(function () {
+                this.partial(`./temp/common/main.hbs`);
+            });
+        }).catch(notifications.handleError);
     }
 
     function getCommonElements(ctx) {
@@ -32,6 +32,10 @@ let utils = (() => {
             'footer': './temp/common/footer.hbs',
             'leftColumn': './temp/common/leftColumn.hbs'
         }
+    }
+
+    function getCities() {
+        return ["Sofia", "Varna", "Plovdiv", "Ruse"];
     }
 
     function calcTime(dateIsoFormat) {
@@ -56,6 +60,7 @@ let utils = (() => {
     return {
         getCommonElements,
         calcTime,
+        getCities,
         loadPage
     }
 })();
