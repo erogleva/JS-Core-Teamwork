@@ -5,6 +5,7 @@
     right: 0;
     text-align: center;
     margin: 1em;
+    z-index: 1;
 }
 
 .notification {
