@@ -53,6 +53,32 @@ let adsService = (() => {
         return requester.get('appdata', endpoint);
     }
 
+    function getAdsByParams(brand, model, city, maxMileage, maxPrice) {
+        let endpoint = `ads?query=`;
+        let queryObject = {"brand": `${brand}`};
+
+        if (model !== "" && model !== "All models") {
+            queryObject["model"] = model;
+        }
+
+        if (city !== "All cities") {
+            queryObject["city"] = city;
+        }
+
+
+        if (!isNaN(maxMileage)) {
+            queryObject["mileage"] = {"$lte": maxMileage};
+        }
+
+        if (!isNaN(maxPrice)) {
+            queryObject["price"] = {"$lte": maxPrice};
+        }
+
+        endpoint += JSON.stringify(queryObject);
+
+        return requester.get('appdata', endpoint);
+    }
+
     function removeAd(adId) {
         return requester.del('appdata', 'ads/' + adId);
     }
@@ -61,11 +87,6 @@ let adsService = (() => {
         let endpoint = `ads?query={"promoted":true}`;
         return requester.get('appdata', endpoint);
     }
-    //
-    // function getVipAdsCount() {
-    //     let endpoint = `ads/_count/?query={"promoted":true}`;
-    //     return requester.get('appdata', endpoint);
-    // }
 
     return {
         createAd,
@@ -75,6 +96,7 @@ let adsService = (() => {
         editAd,
         removeAd,
         getAdsByBrand,
+        getAdsByParams,
         getVipAds,
     }
 })();
