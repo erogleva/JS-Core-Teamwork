@@ -76,6 +76,5 @@ let adsService = (() => {
         removeAd,
         getAdsByBrand,
         getVipAds,
-        getVipAdsCount
     }
 })();
