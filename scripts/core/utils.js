@@ -14,15 +14,11 @@ let utils = (() => {
 
         brandService.getAllBrands().then(function (data) {
             ctx.brands = data;
+            ctx.advancedCities = utils.getCities();
 
-            adsService.getVipAds().then(function (vipAds) {
-                let vipAdsCount = vipAds.length;
-                let randomVipAdIndex = Math.round(getRandom(0, vipAdsCount - 1));
-                ctx.vipAd = vipAds[randomVipAdIndex];
-                Object.assign(templates, commonTemplates);
-                ctx.loadPartials(templates).then(function () {
-                    this.partial(`./temp/common/main.hbs`);
-                });
+            Object.assign(templates, commonTemplates);
+            ctx.loadPartials(templates).then(function () {
+                this.partial(`./temp/common/main.hbs`);
             });
         });
     }
