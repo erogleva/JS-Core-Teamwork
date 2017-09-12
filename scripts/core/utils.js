@@ -17,16 +17,9 @@ let utils = (() => {
 
             adsService.getVipAds().then(function (vipAds) {
                 let vipAdsCount = vipAds.length;
-                console.log("All vip ads");
-                console.log(vipAds);
                 let randomVipAdIndex = Math.round(getRandom(0, vipAdsCount - 1));
-                console.log(randomVipAdIndex);
-                console.log(vipAds[randomVipAdIndex]);
-
                 ctx.vipAd = vipAds[randomVipAdIndex];
-                console.log(ctx.vipAd);
                 Object.assign(templates, commonTemplates);
-
                 ctx.loadPartials(templates).then(function () {
                     this.partial(`./temp/common/main.hbs`);
                 });
@@ -79,7 +72,8 @@ let utils = (() => {
         getCommonElements,
         calcTime,
         getCities,
-        loadPage
+        loadPage,
+        getRandom
     }
 })
 ();

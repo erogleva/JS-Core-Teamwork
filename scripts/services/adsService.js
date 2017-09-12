@@ -61,6 +61,11 @@ let adsService = (() => {
         let endpoint = `ads?query={"promoted":true}`;
         return requester.get('appdata', endpoint);
     }
+    //
+    // function getVipAdsCount() {
+    //     let endpoint = `ads/_count/?query={"promoted":true}`;
+    //     return requester.get('appdata', endpoint);
+    // }
 
     return {
         createAd,
@@ -70,6 +75,7 @@ let adsService = (() => {
         editAd,
         removeAd,
         getAdsByBrand,
-        getVipAds
+        getVipAds,
+        getVipAdsCount
     }
 })();
