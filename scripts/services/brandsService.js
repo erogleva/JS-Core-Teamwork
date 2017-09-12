@@ -12,6 +12,11 @@ let brandService = (() => {
         return requester.update('appdata', endpoint, data);
     }
 
+    function getBrandById(id) {
+        let endpoint = `brand/${id}`;
+        return requester.get('appdata', endpoint);
+    }
+
     function getBrand(name) {
         let endpoint = `brand?query={"name":"${name}"}`;
         return requester.get('appdata', endpoint);
@@ -26,6 +31,7 @@ let brandService = (() => {
         createBrand,
         editBrand,
         getBrand,
+        getBrandById,
         deleteBrand
     }
 })();

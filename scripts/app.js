@@ -8,6 +8,8 @@ $(() => {
 
         //Home
         this.get('#/home', homeController.displayHome);
+        
+        this.get('/', homeController.displayHome);
 
         this.get('index.html', homeController.displayHome);
 
@@ -80,15 +82,15 @@ $(() => {
         //Models
         this.get('#/admin/models', modelsController.displayModels);
 
-        this.get('#/admin/models/delete/:brand/:name', modelsController.handleDeleteModel);
+        this.get('#/admin/models/delete/:id', modelsController.handleDeleteModel);
 
-        this.get('#/admin/models/add/:name', modelsController.displayAddModel);
+        this.get('#/admin/models/add/:id', modelsController.displayAddModel);
 
-        this.post('#/admin/models/add/:brand', modelsController.handleAddModel);
+        this.post('#/admin/models/add/:id', modelsController.handleAddModel);
 
-        this.get('#/admin/models/edit/:brand/:model', modelsController.displayEditModel);
+        this.get('#/admin/models/edit/:id', modelsController.displayEditModel);
 
-        this.post('#/admin/models/edit/:brand/:model', modelsController.handleEditModel);
+        this.post('#/admin/models/edit/:id', modelsController.handleEditModel);
 
         //Comments
         this.post('#/ads/details/add/comments/:id', commentsController.handleAdsComment);

@@ -1,4 +1,20 @@
 let adsService = (() => {
+    const adsSort = '&sort={"promoted": -1, "_kmd.ect": -1}';
+
+    function getAds() {
+        return requester.get('appdata', `ads?query{}${adsSort}`);
+    }
+
+    function getUserAds(username) {
+        let endpoint = `ads?query={"author":"${username}"}` + adsSort;
+        return requester.get('appdata', endpoint);
+    }
+
+    function getAdsByBrand(brandName) {
+        let endpoint = `ads?query={"brand":"${brandName}"}` + adsSort;
+        return requester.get('appdata', endpoint);
+    }
+    
     function createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate) {
         return requester.post('appdata', 'ads', {
             title,
@@ -14,16 +30,6 @@ let adsService = (() => {
             publishedDate
         });
     }
-
-    function getAds() {
-        return requester.get('appdata', 'ads');
-    }
-
-    function getUserAds(username) {
-        let endpoint = `ads?query={"author":"${username}"}`;
-        return requester.get('appdata', endpoint);
-    }
-
 
     function loadAdDetails(adId) {
         return requester.get('appdata', 'ads/' + adId);
@@ -48,17 +54,12 @@ let adsService = (() => {
         return requester.update('appdata', 'ads/' + adId, adData);
     }
 
-    function getAdsByBrand(brandName) {
-        let endpoint = `ads?query={"brand":"${brandName}"}&sort={"_kmd.ect": -1}`;
-        return requester.get('appdata', endpoint);
-    }
-
     function removeAd(adId) {
         return requester.del('appdata', 'ads/' + adId);
     }
 
     function getCounts() {
-        return requester.get('appdata', 'ads/_count');
+        return requester.get('appdata', 'ads/_count?query{"promoted":"true"}');
     }
 
     function getRandomVipAds(num) {

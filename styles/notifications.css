@@ -1,10 +1,11 @@
 #notifications {
-    float: right;
     position: absolute;
-    top: 0;
+    z-index: 100;
+    float: right;
     right: 0;
     text-align: center;
     margin: 1em;
+    top: 0
 }
 
 .notification {

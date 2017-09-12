@@ -11,7 +11,6 @@ let adsController = (() => {
         };
 
         ctx.cities = utils.getCities();
-
         utils.loadPage(ctx, templates);
     }
 

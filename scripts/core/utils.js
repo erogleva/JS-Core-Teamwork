@@ -11,11 +11,14 @@ let utils = (() => {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }
-
-        brandService.getAllBrands().then(function (data) {
-            ctx.brands = data;
-            adsService.getCounts().then(function (data) {
-                let randNum = Math.round(getRandom(0, data.count - 1));
+        Promise.all([brandService.getAllBrands(), modelsService.getAllModels(), adsService.getCounts()])
+            .then(function ([brands, models, ads]) {
+                ctx.brands = brands;
+                for (let brand of brands) {
+                    brand.models = models
+                        .filter(m => m.brand_id === brand._id);
+                }
+                let randNum = Math.round(getRandom(0, ads.count - 1));
                 console.log(randNum);
                 adsService.getRandomVipAds(randNum)
                     .then(function (vipAds) {
@@ -26,23 +29,7 @@ let utils = (() => {
                             this.partial(`./temp/common/main.hbs`);
                         });
                     });
-            })
-
-        }).catch(notifications.handleError);
-    }
-
-
-    function getCommonElements(ctx) {
-        if (usersService.isAuthed()) {
-            ctx.loggedUsername = sessionStorage.getItem('username');
-            ctx.userRole = sessionStorage.getItem('userRole');
-        }
-
-        return {
-            'header': './temp/common/header.hbs',
-            'footer': './temp/common/footer.hbs',
-            'leftColumn': './temp/common/leftColumn.hbs'
-        }
+            });
     }
 
     function getCities() {
@@ -67,11 +54,12 @@ let utils = (() => {
             return value === 1 ? '' : 's';
         }
     }
+
     function getRandom(min, max) {
-        return Math.random() * (max - min) + min;
+        return (Math.random() * max) + min;
     }
+
     return {
-        getCommonElements,
         calcTime,
         getCities,
         loadPage

@@ -10,9 +10,11 @@
   "homepage": "https://github.com/erogleva/JS-Core-Teamwork#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "chai": "^4.1.2",
     "handlebars": "^4.0.10",
     "jquery": "3.2.1",
     "lite-server": "^2.3.0",
+    "mocha": "^3.5.2",
     "sammy": "0.7.6"
   }
 }

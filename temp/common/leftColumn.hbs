@@ -7,13 +7,7 @@
                     {{#each brands}}
                         <li>
                             <a href="#/search/brand/{{name}}" title="">{{name}}
-                                <span class="badge pull-right">
-                                    {{#if models}}
-                                        {{len models}}
-                                    {{else}}
-                                        0
-                                    {{/if}}
-                                </span>
+                                <span class="badge pull-right">{{len models}}</span>
                             </a>
                         </li>
                     {{/each}}
