@@ -1,5 +1,6 @@
 let modelsService = (() => {
     $(document).on("change", "#brand", displayModels);
+    $(document).on("change", "#advancedBrand", displayAdvancedSearchModels);
 
     function displayModels() {
         let brand_id = $('#brand').find(":selected").val();
@@ -11,9 +12,19 @@ let modelsService = (() => {
                 $('#model').append($(`<option value="${model.name}">${model.name}</option>`));
             }
             $('#model').append(`<option value="Other">Other</option>`);
+        })
+    }
 
-            console.log(models);
-            console.log(Object.keys(models).length);
+    function displayAdvancedSearchModels() {
+        let brand_id = $('#advancedBrand').find(":selected").val();
+
+        getModelsByBrand(brand_id).then(function (models) {
+            $('#advancedModel').find("option").remove();
+            $('#advancedModel').append($(`<option value="all">All models</option>`));
+
+            for (let model of models) {
+                $('#advancedModel').append($(`<option value="${model.name}">${model.name}</option>`));
+            }
         })
     }
 
@@ -46,6 +57,7 @@ let modelsService = (() => {
         editModel,
         getModel,
         deleteModel,
-        addModel
+        addModel,
+        displayAdvancedSearchModels
     }
 })();

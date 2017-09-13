@@ -146,6 +146,29 @@ let adsController = (() => {
         });
     }
 
+    function displayAdvancedSearchAds(ctx) {
+        let brand = $("#advancedBrand").find(":selected").text();
+        let model = $("#advancedModel").find(":selected").text();
+        let city = $("#advancedCity").find(":selected").text();
+        let mileage = parseInt(ctx.params.advancedMileage);
+        let price = parseFloat(ctx.params.advancedPrice);
+        ctx.message = `Advanced search results`;
+
+        adsService.getAdsByParams(brand, model, city, mileage, price).then(function (data) {
+            for (let ad of data) {
+                ad.description = ad.description.substring(0, 15) + "...";
+            }
+
+            ctx.ads = data;
+            let templates = {
+                content: './temp/home/index.hbs',
+                ad: './temp/ads/ad.hbs'
+            };
+
+            utils.loadPage(ctx, templates);
+        });
+    }
+
     function handleEditAd(ctx) {
         let adId = ctx.params.id;
         let title = ctx.params.title;
@@ -249,6 +272,7 @@ let adsController = (() => {
         displayUserAds,
         displayAdsSearch,
         displayAdsBrandSearch,
+        displayAdvancedSearchAds,
         handleCreateAd,
         handleEditAd,
         handleDeleteAd,

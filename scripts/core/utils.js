@@ -20,11 +20,10 @@ let utils = (() => {
                         .filter(m => m.brand_id === brand._id);
                 }
                 let randNum = Math.round(getRandom(0, ads.count - 1));
-                console.log(randNum);
                 adsService.getRandomVipAds(randNum)
                     .then(function (vipAds) {
                         ctx.vipAds = vipAds;
-                        console.log(vipAds);
+                        ctx.advancedCities = getCities();
                         Object.assign(templates, commonTemplates);
                         ctx.loadPartials(templates).then(function () {
                             this.partial(`./temp/common/main.hbs`);
@@ -66,5 +65,4 @@ let utils = (() => {
         loadPage,
         getRandom
     }
-})
-();
+})();

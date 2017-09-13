@@ -54,13 +54,45 @@ let adsService = (() => {
         return requester.update('appdata', 'ads/' + adId, adData);
     }
 
+    function getAdsByBrand(brandName) {
+        let endpoint = `ads?query={"brand":"${brandName}"}&sort={"_kmd.ect": -1}`;
+        return requester.get('appdata', endpoint);
+    }
+
+    function getAdsByParams(brand, model, city, maxMileage, maxPrice) {
+        let endpoint = `ads?query=`;
+        let queryObject = { "brand": `${brand}` };
+
+        if (model !== "" && model !== "All models") {
+            queryObject["model"] = model;
+        }
+
+        if (city !== "All cities") {
+            queryObject["city"] = city;
+        }
+
+
+        if (!isNaN(maxMileage)) {
+            queryObject["mileage"] = { "$lte": maxMileage };
+        }
+
+        if (!isNaN(maxPrice)) {
+            queryObject["price"] = { "$lte": maxPrice };
+        }
+
+        endpoint += JSON.stringify(queryObject);
+
+        return requester.get('appdata', endpoint);
+    }
+
     function removeAd(adId) {
         return requester.del('appdata', 'ads/' + adId);
     }
 
     function getRandomVipAds(num) {
         let endpoint = `ads?query={"promoted":true}&limit=1&skip=${num}`;
-        console.log(endpoint);
+        return requester.get('appdata', endpoint);
+    }
 
     function getVipAds() {
         let endpoint = `ads?query={"promoted":true}`;
@@ -80,6 +112,9 @@ let adsService = (() => {
         editAd,
         removeAd,
         getAdsByBrand,
+        getAdsByParams,
         getVipAds,
+        getVipAdsCount,
+        getRandomVipAds
     }
 })();

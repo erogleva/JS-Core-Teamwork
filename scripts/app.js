@@ -53,6 +53,8 @@ $(() => {
 
         this.get('#/search/brand/:brand', adsController.displayAdsBrandSearch);
 
+        this.post('#/search/advanced', adsController.displayAdvancedSearchAds);
+
         this.get('#/makeVip/:id', adsController.makeVip);
 
         //Messages

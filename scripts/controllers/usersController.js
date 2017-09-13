@@ -86,9 +86,9 @@ let usersController = (() => {
 
             usersService.saveSession(userInfo);
             usersService.getUserInfo(sessionStorage.getItem('username')).then(function (data) {
-                //if (data[0].userRole) {
+                if (data[0].userRole) {
                     sessionStorage.setItem('userRole', 'admin')
-                //}
+                }
 
                 notifications.showInfo('Login successful.');
                 ctx.redirect("#/home");
