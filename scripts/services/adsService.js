@@ -14,7 +14,7 @@ let adsService = (() => {
         let endpoint = `ads?query={"brand":"${brandName}"}` + adsSort;
         return requester.get('appdata', endpoint);
     }
-    
+
     function createAd(title, description, brand, model, city, mileage, price, images, author, promoted, publishedDate) {
         return requester.post('appdata', 'ads', {
             title,
@@ -58,13 +58,17 @@ let adsService = (() => {
         return requester.del('appdata', 'ads/' + adId);
     }
 
-    function getCounts() {
-        return requester.get('appdata', 'ads/_count?query{"promoted":"true"}');
-    }
-
     function getRandomVipAds(num) {
         let endpoint = `ads?query={"promoted":true}&limit=1&skip=${num}`;
         console.log(endpoint);
+
+    function getVipAds() {
+        let endpoint = `ads?query={"promoted":true}`;
+        return requester.get('appdata', endpoint);
+    }
+
+    function getVipAdsCount() {
+        let endpoint = `ads/_count?query={"promoted":true}`;
         return requester.get('appdata', endpoint);
     }
 
@@ -76,7 +80,6 @@ let adsService = (() => {
         editAd,
         removeAd,
         getAdsByBrand,
-        getCounts,
-        getRandomVipAds
+        getVipAds,
     }
 })();

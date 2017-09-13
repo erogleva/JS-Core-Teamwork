@@ -11,7 +11,8 @@ let utils = (() => {
             ctx.loggedUsername = sessionStorage.getItem('username');
             ctx.userRole = sessionStorage.getItem('userRole');
         }
-        Promise.all([brandService.getAllBrands(), modelsService.getAllModels(), adsService.getCounts()])
+
+        Promise.all([brandService.getAllBrands(), modelsService.getAllModels(), adsService.getVipAdsCount()])
             .then(function ([brands, models, ads]) {
                 ctx.brands = brands;
                 for (let brand of brands) {
@@ -62,6 +63,8 @@ let utils = (() => {
     return {
         calcTime,
         getCities,
-        loadPage
+        loadPage,
+        getRandom
     }
-})();
+})
+();

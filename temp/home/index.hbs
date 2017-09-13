@@ -1,3 +1,11 @@
+<legend>VIP ADS</legend>
+{{#if vip}}
+    {{#each vip}}
+        {{> ad}}
+    {{/each}}
+{{else}}
+    No Ads
+{{/if}}
 <legend>{{message}}</legend>
 {{#if ads}}
     {{#each ads}}

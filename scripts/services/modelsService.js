@@ -37,7 +37,7 @@ let modelsService = (() => {
         return requester.del('appdata', `models/${id}`);
     }
 
-    function getModelsByBrand(id){
+    function getModelsByBrand(id) {
         return requester.get('appdata', `models?query={"brand_id":"${id}"}`);
     }
 
