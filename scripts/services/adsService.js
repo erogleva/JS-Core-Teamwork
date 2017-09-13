@@ -1,5 +1,5 @@
 let adsService = (() => {
-    const adsSort = '&sort={"promoted": -1, "_kmd.ect": -1}';
+    const adsSort = '&sort={"_kmd.ect": -1}';
 
     function getAds() {
         return requester.get('appdata', `ads?query{}${adsSort}`);
@@ -55,7 +55,7 @@ let adsService = (() => {
     }
 
     function getAdsByBrand(brandName) {
-        let endpoint = `ads?query={"brand":"${brandName}"}&sort={"_kmd.ect": -1}`;
+        let endpoint = `ads?query={"brand":"${brandName}"}` + adsSort;
         return requester.get('appdata', endpoint);
     }
 
@@ -80,7 +80,7 @@ let adsService = (() => {
             queryObject["price"] = { "$lte": maxPrice };
         }
 
-        endpoint += JSON.stringify(queryObject);
+        endpoint += JSON.stringify(queryObject) + adsSort;
 
         return requester.get('appdata', endpoint);
     }

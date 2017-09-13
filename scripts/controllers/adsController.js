@@ -21,26 +21,25 @@ let adsController = (() => {
 
         let adId = context.params.id;
 
-        adsService.loadAdDetails(adId).then(function (adInfo) {
-            context.id = adId;
-            context.title = adInfo.title;
-            context.description = adInfo.description;
-            context.publishedDate = utils.calcTime(adInfo.publishedDate);
-            context.author = adInfo.author;
-            context.brand = adInfo.brand;
-            context.model = adInfo.model;
-            context.city = adInfo.city;
-            context.mileage = parseInt(adInfo.mileage);
-            context.price = parseFloat(adInfo.price);
-            context.images = adInfo.images;
-            context.vip = adInfo.promoted;
+        Promise.all([adsService.loadAdDetails(adId), commentsService.getAdComments(adId)])
+            .then(function ([adInfo, comments]) {
+                context.id = adId;
+                context.title = adInfo.title;
+                context.description = adInfo.description;
+                context.publishedDate = utils.calcTime(adInfo.publishedDate);
+                context.author = adInfo.author;
+                context.brand = adInfo.brand;
+                context.model = adInfo.model;
+                context.city = adInfo.city;
+                context.mileage = parseInt(adInfo.mileage);
+                context.price = parseFloat(adInfo.price);
+                context.images = adInfo.images;
+                context.vip = adInfo.promoted;
 
-            if (context.author === context.loggedUsername ||
-                sessionStorage.getItem('userRole')) {
-                context.isAuthor = true;
-            }
-
-            commentsService.getAdComments(adId).then(function (comments) {
+                if (context.author === context.loggedUsername ||
+                    sessionStorage.getItem('userRole')) {
+                    context.isAuthor = true;
+                }
                 context.comments = comments;
 
                 for (let comment of context.comments) {
@@ -57,8 +56,7 @@ let adsController = (() => {
                 };
 
                 utils.loadPage(context, templates);
-            })
-        }).catch(notifications.handleError);
+            }).catch(notifications.handleError);
     }
 
     function displayEditAd(ctx) {

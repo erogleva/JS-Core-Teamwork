@@ -1,27 +1,31 @@
 let homeController = (() => {
     function displayHome(ctx) {
-        adsService.getVipAds().then(function (vipAds) {
-            let vipAdsCount = vipAds.length;
+        Promise.all([adsService.getVipAds(), adsService.getAds()])
+            .then(function ([vipAds, ads]) {
+                let vipAdsCount = vipAds.length;
 
-            if (vipAdsCount > 3) {
-                let vipIndexAds = [];
+                if (vipAdsCount > 3) {
+                    let vipIndexAds = [];
 
-                for (let i = 0; i < 3; i++) {
-                    vipIndexAds.push(vipAds[randomVipAdIndex = Math.round(utils.getRandom(0, vipAdsCount - 1))]);
+                    for (let i = 0; i < 3; i++) {
+                        let randomVipAdIndex = Math.round(utils.getRandom(0, vipAdsCount - 1));
+                        vipIndexAds.push(vipAds[randomVipAdIndex]);
+                        
+                        vipAds.splice(randomVipAdIndex, 1);         
+                        vipAdsCount = vipAds.length;
+                    }
+
+                    ctx.vip = vipIndexAds;
+                } else {
+                    ctx.vip = vipAds;
                 }
 
-                ctx.vip = vipIndexAds;
-            } else {
-                ctx.vip = vipAds;
-            }
-
-            adsService.getAds().then(function (data) {
-                for (let ad of data) {
+                for (let ad of ads) {
                     ad.description = ad.description.substring(0, 15) + "...";
                 }
 
                 ctx.message = "All advertisements";
-                ctx.ads = data;
+                ctx.ads = ads;
 
                 let templates = {
                     content: './temp/home/index.hbs',
@@ -29,8 +33,7 @@ let homeController = (() => {
                 };
 
                 utils.loadPage(ctx, templates);
-            })
-        }).catch(notifications.handleError);
+            }).catch(notifications.handleError);;
     }
 
     return {
