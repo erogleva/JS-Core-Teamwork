@@ -54,14 +54,9 @@ let adsService = (() => {
         return requester.update('appdata', 'ads/' + adId, adData);
     }
 
-    function getAdsByBrand(brandName) {
-        let endpoint = `ads?query={"brand":"${brandName}"}` + adsSort;
-        return requester.get('appdata', endpoint);
-    }
-
     function getAdsByParams(brand, model, city, maxMileage, maxPrice) {
         let endpoint = `ads?query=`;
-        let queryObject = { "brand": `${brand}` };
+        let queryObject = {"brand": `${brand}`};
 
         if (model !== "" && model !== "All models") {
             queryObject["model"] = model;
@@ -73,15 +68,14 @@ let adsService = (() => {
 
 
         if (!isNaN(maxMileage)) {
-            queryObject["mileage"] = { "$lte": maxMileage };
+            queryObject["mileage"] = {"$lte": maxMileage};
         }
 
         if (!isNaN(maxPrice)) {
-            queryObject["price"] = { "$lte": maxPrice };
+            queryObject["price"] = {"$lte": maxPrice};
         }
 
         endpoint += JSON.stringify(queryObject) + adsSort;
-
         return requester.get('appdata', endpoint);
     }
 

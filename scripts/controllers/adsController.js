@@ -21,42 +21,42 @@ let adsController = (() => {
 
         let adId = context.params.id;
 
-        Promise.all([adsService.loadAdDetails(adId), commentsService.getAdComments(adId)])
-            .then(function ([adInfo, comments]) {
-                context.id = adId;
-                context.title = adInfo.title;
-                context.description = adInfo.description;
-                context.publishedDate = utils.calcTime(adInfo.publishedDate);
-                context.author = adInfo.author;
-                context.brand = adInfo.brand;
-                context.model = adInfo.model;
-                context.city = adInfo.city;
-                context.mileage = parseInt(adInfo.mileage);
-                context.price = parseFloat(adInfo.price);
-                context.images = adInfo.images;
-                context.vip = adInfo.promoted;
+        Promise.all([adsService.loadAdDetails(adId), commentsService.getAdComments(adId)]).then(function ([adInfo, comments]) {
+            context.id = adId;
+            context.title = adInfo.title;
+            context.description = adInfo.description;
+            context.publishedDate = utils.calcTime(adInfo.publishedDate);
+            context.author = adInfo.author;
+            context.brand = adInfo.brand;
+            context.model = adInfo.model;
+            context.city = adInfo.city;
+            context.mileage = parseInt(adInfo.mileage);
+            context.price = parseFloat(adInfo.price);
+            context.images = adInfo.images;
+            context.vip = adInfo.promoted;
 
-                if (context.author === context.loggedUsername ||
-                    sessionStorage.getItem('userRole')) {
-                    context.isAuthor = true;
+            if (context.author === context.loggedUsername ||
+                sessionStorage.getItem('userRole')) {
+                context.isAuthor = true;
+            }
+
+            context.comments = comments;
+
+            for (let comment of context.comments) {
+                if (sessionStorage.getItem('username') === comment.author
+                    || sessionStorage.getItem('userRole') === 'admin') {
+                    comment.isOwner = true;
                 }
-                context.comments = comments;
+            }
 
-                for (let comment of context.comments) {
-                    if (sessionStorage.getItem('username') === comment.author
-                        || sessionStorage.getItem('userRole') === 'admin') {
-                        comment.isOwner = true;
-                    }
-                }
+            let templates = {
+                content: './temp/ads/details/index.hbs',
+                comments: './temp/ads/details/comments/index.hbs',
+                form: './temp/ads/details/comments/form.hbs'
+            };
 
-                let templates = {
-                    content: './temp/ads/details/index.hbs',
-                    comments: './temp/ads/details/comments/index.hbs',
-                    form: './temp/ads/details/comments/form.hbs'
-                };
-
-                utils.loadPage(context, templates);
-            }).catch(notifications.handleError);
+            utils.loadPage(context, templates);
+        }).catch(notifications.handleError);
     }
 
     function displayEditAd(ctx) {
@@ -90,6 +90,11 @@ let adsController = (() => {
         let username = ctx.params.username;
 
         adsService.getUserAds(username).then(function (ads) {
+            for (let ad of ads) {
+                ad.description = ad.description.substring(0, 15) + "...";
+                ad.title = ad.title.substring(0, 20) + "...";
+            }
+
             ctx.ads = ads;
             ctx.username = ctx.params.username;
             ctx.message = `${username}'s advertisements`;
@@ -113,9 +118,11 @@ let adsController = (() => {
 
             for (let ad of data) {
                 ad.description = ad.description.substring(0, 15) + "...";
+                ad.title = ad.title.substring(0, 20) + "...";
             }
 
             ctx.ads = data;
+
             let templates = {
                 content: './temp/home/index.hbs',
                 ad: './temp/ads/ad.hbs'
@@ -132,9 +139,11 @@ let adsController = (() => {
         adsService.getAdsByBrand(brand).then(function (data) {
             for (let ad of data) {
                 ad.description = ad.description.substring(0, 15) + "...";
+                ad.title = ad.title.substring(0, 20) + "...";
             }
 
             ctx.ads = data;
+
             let templates = {
                 content: './temp/home/index.hbs',
                 ad: './temp/ads/ad.hbs'
@@ -155,9 +164,11 @@ let adsController = (() => {
         adsService.getAdsByParams(brand, model, city, mileage, price).then(function (data) {
             for (let ad of data) {
                 ad.description = ad.description.substring(0, 15) + "...";
+                ad.title = ad.title.substring(0, 20) + "...";
             }
 
             ctx.ads = data;
+
             let templates = {
                 content: './temp/home/index.hbs',
                 ad: './temp/ads/ad.hbs'

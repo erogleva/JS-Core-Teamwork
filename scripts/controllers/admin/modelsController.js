@@ -9,14 +9,15 @@ let modelsController = (() => {
     }
 
     function displayAddModel(ctx) {
-        brandService.getBrandById(ctx.params.id).then(function(brand){
+        brandService.getBrandById(ctx.params.id).then(function (brand) {
             ctx.brand_id = brand._id;
             ctx.name = brand.name;
+
             let templates = {
                 regForm: './temp/registration/form.hbs',
                 content: './temp/admin/models/add.hbs'
             };
-    
+
             utils.loadPage(ctx, templates);
         })
     }
@@ -26,6 +27,7 @@ let modelsController = (() => {
 
         modelsService.getModel(ctx.model_id).then(function (model) {
             ctx.model = model.name;
+
             let templates = {
                 content: './temp/admin/models/edit.hbs'
             };

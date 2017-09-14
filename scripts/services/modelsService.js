@@ -11,6 +11,7 @@ let modelsService = (() => {
             for (let model of models) {
                 $('#model').append($(`<option value="${model.name}">${model.name}</option>`));
             }
+
             $('#model').append(`<option value="Other">Other</option>`);
         })
     }
@@ -33,11 +34,11 @@ let modelsService = (() => {
     }
 
     function addModel(modelName, brand_id) {
-        return requester.post('appdata', `models`, { name: modelName, brand_id });
+        return requester.post('appdata', `models`, {name: modelName, brand_id});
     }
 
     function editModel(id, modelName, brand_id) {
-        return requester.update('appdata', `models/${id}`, { name: modelName, brand_id });
+        return requester.update('appdata', `models/${id}`, {name: modelName, brand_id});
     }
 
     function getAllModels() {

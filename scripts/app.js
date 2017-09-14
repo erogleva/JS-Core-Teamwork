@@ -8,7 +8,7 @@ $(() => {
 
         //Home
         this.get('#/home', homeController.displayHome);
-        
+
         this.get('/', homeController.displayHome);
 
         this.get('index.html', homeController.displayHome);

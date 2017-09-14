@@ -1,39 +1,49 @@
 let homeController = (() => {
     function displayHome(ctx) {
-        Promise.all([adsService.getVipAds(), adsService.getAds()])
-            .then(function ([vipAds, ads]) {
-                let vipAdsCount = vipAds.length;
+        Promise.all([adsService.getVipAds(), adsService.getAds()]).then(function ([allVipAds, ads]) {
+            let vipAdsCount = allVipAds.length;
 
-                if (vipAdsCount > 3) {
-                    let vipIndexAds = [];
+            if (vipAdsCount > 3) {
+                let vipAds = [];
 
-                    for (let i = 0; i < 3; i++) {
-                        let randomVipAdIndex = Math.round(utils.getRandom(0, vipAdsCount - 1));
-                        vipIndexAds.push(vipAds[randomVipAdIndex]);
-                        
-                        vipAds.splice(randomVipAdIndex, 1);         
-                        vipAdsCount = vipAds.length;
-                    }
+                for (let i = 0; i < 3; i++) {
+                    let randomVipAdIndex = Math.round(utils.getRandom(0, vipAdsCount - 1));
+                    let vipAd = allVipAds[randomVipAdIndex];
 
-                    ctx.vip = vipIndexAds;
-                } else {
-                    ctx.vip = vipAds;
+                    vipAd.description = vipAd.description.substring(0, 15) + "...";
+                    vipAd.title = vipAd.title.substring(0, 20) + "...";
+
+                    vipAds.push(vipAd);
+
+                    allVipAds.splice(randomVipAdIndex, 1);
+                    vipAdsCount = allVipAds.length;
                 }
 
-                for (let ad of ads) {
-                    ad.description = ad.description.substring(0, 15) + "...";
+                ctx.vip = vipAds;
+            } else {
+                for (let vipAd of allVipAds) {
+                    vipAd.description = vipAd.description.substring(0, 15) + "...";
+                    vipAd.title = vipAd.title.substring(0, 20) + "...";
                 }
 
-                ctx.message = "All advertisements";
-                ctx.ads = ads;
+                ctx.vip = allVipAds;
+            }
 
-                let templates = {
-                    content: './temp/home/index.hbs',
-                    ad: './temp/ads/ad.hbs'
-                };
+            for (let ad of ads) {
+                ad.description = ad.description.substring(0, 15) + "...";
+                ad.title = ad.title.substring(0, 20) + "...";
+            }
 
-                utils.loadPage(ctx, templates);
-            }).catch(notifications.handleError);;
+            ctx.message = "All advertisements";
+            ctx.ads = ads;
+
+            let templates = {
+                content: './temp/home/index.hbs',
+                ad: './temp/ads/ad.hbs'
+            };
+
+            utils.loadPage(ctx, templates);
+        }).catch(notifications.handleError);
     }
 
     return {

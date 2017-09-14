@@ -12,19 +12,21 @@ let utils = (() => {
             ctx.userRole = sessionStorage.getItem('userRole');
         }
 
-        Promise.all([brandService.getAllBrands(), modelsService.getAllModels()])
-            .then(function ([brands, models]) {
-                ctx.advancedCities = getCities();
-                ctx.brands = brands;
-                for (let brand of brands) {
-                    brand.models = models
-                        .filter(m => m.brand_id === brand._id);
-                }
-                Object.assign(templates, commonTemplates);
-                ctx.loadPartials(templates).then(function () {
-                    this.partial(`./temp/common/main.hbs`);
-                });
+        Promise.all([brandService.getAllBrands(), modelsService.getAllModels()]).then(function ([brands, models]) {
+            ctx.advancedCities = getCities();
+            ctx.brands = brands;
+
+            for (let brand of brands) {
+                brand.models = models
+                    .filter(m => m.brand_id === brand._id);
+            }
+
+            Object.assign(templates, commonTemplates);
+
+            ctx.loadPartials(templates).then(function () {
+                this.partial(`./temp/common/main.hbs`);
             });
+        });
     }
 
     function getCities() {
